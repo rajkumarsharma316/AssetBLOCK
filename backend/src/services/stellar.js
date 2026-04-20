@@ -89,7 +89,7 @@ export async function configureMultiSig(escrowSecret, signerPublicKeys, mediumTh
       lowThreshold: 1,
       medThreshold: mediumThreshold,
       highThreshold: mediumThreshold + 1,
-      masterWeight: 1,
+      masterWeight: 255,
     })
   );
 

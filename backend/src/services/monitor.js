@@ -166,6 +166,15 @@ async function triggerRelease(contract) {
       contractId: contract.id,
       error: err.message,
     });
+
+    // Mark as failed to avoid infinite retry loops on unrecoverable errors
+    if (err.message.includes('op_bad_auth') || err.message.includes('op_underfunded') || err.message.includes('tx_bad_secret')) {
+      run(
+        "UPDATE contracts SET status = 'failed', updated_at = datetime('now') WHERE id = ?",
+        [contract.id]
+      );
+      logger.info('Marked contract as failed due to unrecoverable error', { contractId: contract.id });
+    }
   }
 }
 

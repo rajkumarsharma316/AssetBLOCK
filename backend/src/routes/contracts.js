@@ -67,9 +67,11 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Add signers
-    const signerPublicKeys = signers.map(s => s.publicKey || s);
-    for (const signerKey of signerPublicKeys) {
+    // Add signers (ensure creator is automatically included as a signer)
+    const submittedSigners = signers.map(s => s.publicKey || s);
+    const allSignerKeys = [...new Set([req.user.publicKey, ...submittedSigners])];
+
+    for (const signerKey of allSignerKeys) {
       insert('signers', {
         id: uuidv4(),
         contract_id: contractId,
@@ -82,7 +84,7 @@ router.post('/', async (req, res) => {
     // Create the escrow account
     const escrowResult = await createEscrow(
       contractId,
-      signerPublicKeys,
+      submittedSigners,
       req.user.publicKey,
       threshold
     );
