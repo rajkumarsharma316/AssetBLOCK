@@ -112,7 +112,7 @@ export default function Login() {
           >
             <Zap size={32} color="white" />
           </div>
-          <h1>Payment Engine</h1>
+          <h1>AssetBlock</h1>
           <p>Programmable conditional payments on Stellar</p>
         </div>
 
