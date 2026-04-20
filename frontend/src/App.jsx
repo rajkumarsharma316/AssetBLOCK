@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -25,12 +25,45 @@ function ProtectedRoute({ children }) {
 
 function AppLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
 
   return (
     <div className="app-layout">
-      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      {/* Desktop sidebar */}
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+        className="sidebar-desktop"
+      />
+      {/* Mobile sidebar overlay */}
+      <div
+        className={`mobile-overlay ${mobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+      <Sidebar
+        collapsed={false}
+        onToggle={() => setMobileMenuOpen(false)}
+        className={`sidebar-mobile ${mobileMenuOpen ? 'open' : ''}`}
+        isMobile
+      />
       <div className={`app-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-        <Navbar />
+        <Navbar onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/create" element={<CreateContract />} />

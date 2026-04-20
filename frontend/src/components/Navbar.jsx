@@ -2,9 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { truncateAddress, formatRelativeTime } from '../utils/formatters';
 import { authApi } from '../api/client';
-import { Bell, LogOut, Wallet, ExternalLink } from 'lucide-react';
+import { Bell, LogOut, Wallet, ExternalLink, Menu } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ onMenuToggle }) {
   const { user, logout, notifications, fetchNotifications } = useAuth();
   const [showNotif, setShowNotif] = useState(false);
   const notifRef = useRef(null);
@@ -27,12 +27,13 @@ export default function Navbar() {
 
   return (
     <header
+      className="navbar-inner"
       style={{
         height: 64,
         padding: '0 32px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         gap: 16,
         borderBottom: '1px solid var(--border-primary)',
         background: 'rgba(10, 14, 26, 0.8)',
@@ -42,9 +43,22 @@ export default function Navbar() {
         zIndex: 50,
       }}
     >
+      {/* Left side: Hamburger (mobile only) */}
+      <button
+        className="hamburger-btn"
+        onClick={onMenuToggle}
+        aria-label="Toggle menu"
+      >
+        <Menu size={22} />
+      </button>
+
+      {/* Spacer to push items right on desktop */}
+      <div style={{ flex: 1 }} />
+
       {/* Balance */}
       {user?.balance && (
         <div
+          className="navbar-balance"
           style={{
             padding: '6px 14px',
             background: 'var(--bg-glass)',
@@ -78,6 +92,7 @@ export default function Navbar() {
 
         {showNotif && (
           <div
+            className="notification-dropdown"
             style={{
               position: 'absolute',
               top: '100%',
@@ -150,10 +165,12 @@ export default function Navbar() {
             gap: 10,
           }}
         >
+          {/* Full address (hidden on mobile) */}
           <a
             href={`https://stellar.expert/explorer/testnet/account/${user.publicKey}`}
             target="_blank"
             rel="noopener noreferrer"
+            className="navbar-address-full"
             style={{
               padding: '6px 14px',
               background: 'var(--bg-glass)',
@@ -170,6 +187,30 @@ export default function Navbar() {
           >
             {truncateAddress(user.publicKey, 6)}
             <ExternalLink size={12} />
+          </a>
+
+          {/* Short address (mobile only, hidden by default) */}
+          <a
+            href={`https://stellar.expert/explorer/testnet/account/${user.publicKey}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="navbar-address-short"
+            style={{
+              padding: '6px 10px',
+              background: 'var(--bg-glass)',
+              borderRadius: 'var(--radius-full)',
+              border: '1px solid var(--border-primary)',
+              fontSize: '0.75rem',
+              fontFamily: 'var(--font-mono)',
+              color: 'var(--accent-cyan)',
+              display: 'none',
+              alignItems: 'center',
+              gap: 4,
+              textDecoration: 'none',
+            }}
+          >
+            {truncateAddress(user.publicKey, 3)}
+            <ExternalLink size={10} />
           </a>
 
           <button className="btn btn-ghost btn-icon" onClick={logout} title="Logout">

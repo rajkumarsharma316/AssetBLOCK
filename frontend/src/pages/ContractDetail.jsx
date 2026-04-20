@@ -162,13 +162,13 @@ export default function ContractDetail() {
   return (
     <div className="page-content animate-fade-in">
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 32, flexWrap: 'wrap' }}>
         <button className="btn btn-ghost btn-icon" onClick={() => navigate('/')}>
           <ArrowLeft size={20} />
         </button>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <h1 style={{ fontSize: '1.6rem', fontWeight: 800, background: 'var(--gradient-hero)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <h1 style={{ fontSize: '1.6rem', fontWeight: 800, background: 'var(--gradient-hero)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', wordBreak: 'break-word' }}>
               {contract.title}
             </h1>
             <StatusBadge status={contract.status} />
@@ -228,7 +228,7 @@ export default function ContractDetail() {
                 <div className="info-item" style={{ gridColumn: '1 / -1' }}>
                   <div className="info-item-label">Escrow Account</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span className="info-item-value mono" style={{ fontSize: '0.78rem' }}>
+                    <span className="info-item-value mono" style={{ fontSize: '0.78rem', wordBreak: 'break-all' }}>
                       {contract.escrow_public_key}
                     </span>
                     <button className="btn btn-ghost btn-sm" onClick={() => copyToClipboard(contract.escrow_public_key)} title="Copy">

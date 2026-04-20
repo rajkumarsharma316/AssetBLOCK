@@ -53,7 +53,7 @@ export default function Dashboard() {
 
   return (
     <div className="page-content animate-fade-in">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="page-header page-header-row">
         <div>
           <h1>Dashboard</h1>
           <p>Overview of your conditional payment contracts</p>
@@ -139,6 +139,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="glass-card no-hover" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="table-responsive">
             <table className="data-table">
               <thead>
                 <tr>
@@ -180,6 +181,7 @@ export default function Dashboard() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>

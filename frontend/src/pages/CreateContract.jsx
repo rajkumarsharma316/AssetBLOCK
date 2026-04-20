@@ -243,7 +243,7 @@ export default function CreateContract() {
             </p>
 
             {/* Add signer */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
               <input
                 type="text"
                 className="form-input mono"
