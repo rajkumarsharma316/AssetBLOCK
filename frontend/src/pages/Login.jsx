@@ -68,7 +68,7 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page">
+    <div className="login-page" style={{ overflow: 'hidden' }}>
       {/* Ambient glow effects */}
       <div
         style={{
@@ -185,7 +185,7 @@ export default function Login() {
                       className="form-input mono"
                       value={keyPair.publicKey}
                       readOnly
-                      style={{ fontSize: '0.72rem' }}
+                      style={{ fontSize: '0.65rem', overflow: 'hidden', textOverflow: 'ellipsis' }}
                     />
                   </div>
                   <div className="form-group">
@@ -195,7 +195,7 @@ export default function Login() {
                       className="form-input mono"
                       value={keyPair.secretKey}
                       readOnly
-                      style={{ fontSize: '0.72rem' }}
+                      style={{ fontSize: '0.65rem', overflow: 'hidden', textOverflow: 'ellipsis' }}
                     />
                     <span className="form-hint" style={{ color: 'var(--accent-amber)' }}>
                       ⚠ Save your secret key! You'll need it to log back in.
