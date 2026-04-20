@@ -947,6 +947,24 @@ a:hover {
   gap: 16px;
 }
 
+/* ===== NAVBAR RESPONSIVE ELEMENTS ===== */
+.navbar-balance {
+  display: flex;
+}
+
+.navbar-address-full {
+  display: flex;
+}
+
+.navbar-address-short {
+  display: none;
+}
+
+/* Hide mobile sidebar by default */
+.sidebar-mobile {
+  display: none !important;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .app-main {

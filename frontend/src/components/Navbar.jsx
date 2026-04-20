@@ -55,7 +55,7 @@ export default function Navbar({ onMenuToggle }) {
       {/* Spacer to push items right on desktop */}
       <div style={{ flex: 1 }} />
 
-      {/* Balance */}
+      {/* Balance - NO inline display so CSS can hide it on mobile */}
       {user?.balance && (
         <div
           className="navbar-balance"
@@ -67,7 +67,6 @@ export default function Navbar({ onMenuToggle }) {
             fontSize: '0.82rem',
             fontWeight: 600,
             color: 'var(--text-secondary)',
-            display: 'flex',
             alignItems: 'center',
             gap: 6,
           }}
@@ -165,7 +164,7 @@ export default function Navbar({ onMenuToggle }) {
             gap: 10,
           }}
         >
-          {/* Full address (hidden on mobile) */}
+          {/* Full address (hidden on mobile via CSS) - NO inline display */}
           <a
             href={`https://stellar.expert/explorer/testnet/account/${user.publicKey}`}
             target="_blank"
@@ -179,7 +178,6 @@ export default function Navbar({ onMenuToggle }) {
               fontSize: '0.82rem',
               fontFamily: 'var(--font-mono)',
               color: 'var(--accent-cyan)',
-              display: 'flex',
               alignItems: 'center',
               gap: 6,
               textDecoration: 'none',
@@ -189,7 +187,7 @@ export default function Navbar({ onMenuToggle }) {
             <ExternalLink size={12} />
           </a>
 
-          {/* Short address (mobile only, hidden by default) */}
+          {/* Short address (mobile only - shown via CSS) - NO inline display */}
           <a
             href={`https://stellar.expert/explorer/testnet/account/${user.publicKey}`}
             target="_blank"
@@ -203,7 +201,6 @@ export default function Navbar({ onMenuToggle }) {
               fontSize: '0.75rem',
               fontFamily: 'var(--font-mono)',
               color: 'var(--accent-cyan)',
-              display: 'none',
               alignItems: 'center',
               gap: 4,
               textDecoration: 'none',
