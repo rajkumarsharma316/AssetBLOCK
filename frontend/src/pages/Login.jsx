@@ -68,15 +68,15 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page" style={{ overflow: 'hidden' }}>
+    <div className="login-page">
       {/* Ambient glow effects */}
       <div
         style={{
           position: 'absolute',
           top: '20%',
           left: '30%',
-          width: 400,
-          height: 400,
+          width: 'min(400px, 80vw)',
+          height: 'min(400px, 80vw)',
           background: 'radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)',
           borderRadius: '50%',
           pointerEvents: 'none',
@@ -87,8 +87,8 @@ export default function Login() {
           position: 'absolute',
           bottom: '20%',
           right: '25%',
-          width: 350,
-          height: 350,
+          width: 'min(350px, 70vw)',
+          height: 'min(350px, 70vw)',
           background: 'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)',
           borderRadius: '50%',
           pointerEvents: 'none',
@@ -132,19 +132,19 @@ export default function Login() {
               type="button"
               className={`btn ${mode === 'generate' ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => { setMode('generate'); setError(''); }}
-              style={{ flex: 1 }}
+              style={{ flex: 1, padding: '10px 4px', fontSize: '0.85rem' }}
             >
-              <RefreshCw size={16} />
-              New Wallet
+              <RefreshCw size={16} style={{ flexShrink: 0 }} />
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>New Wallet</span>
             </button>
             <button
               type="button"
               className={`btn ${mode === 'import' ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => { setMode('import'); setError(''); }}
-              style={{ flex: 1 }}
+              style={{ flex: 1, padding: '10px 4px', fontSize: '0.85rem' }}
             >
-              <Key size={16} />
-              Import Key
+              <Key size={16} style={{ flexShrink: 0 }} />
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>Import Key</span>
             </button>
           </div>
 

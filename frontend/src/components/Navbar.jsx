@@ -41,6 +41,8 @@ export default function Navbar({ onMenuToggle }) {
         position: 'sticky',
         top: 0,
         zIndex: 50,
+        minWidth: 0,
+        overflow: 'hidden',
       }}
     >
       {/* Left side: Hamburger (mobile only) */}
