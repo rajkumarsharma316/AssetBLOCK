@@ -13,7 +13,13 @@ import logger from './utils/logger.js';
 const app = express();
 
 // Middleware
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'], credentials: true }));
+app.use(cors({ 
+  origin: function (origin, callback) {
+    // Allow any origin for the MVP (including Vercel deployments and localhost)
+    callback(null, true);
+  }, 
+  credentials: true 
+}));
 app.use(express.json());
 
 // Initialize database
