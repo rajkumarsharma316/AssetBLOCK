@@ -11,7 +11,7 @@ https://asset-block.vercel.app/
 
 ## 🎥 Video
 <!-- PLACEHOLDER: Insert a link to a demo video showing full MVP functionality -->
-(https://github.com/user-attachments/assets/76a81a99-593a-4a28-84d3-9a4e2aae8acb)
+https://github.com/user-attachments/assets/76a81a99-593a-4a28-84d3-9a4e2aae8acb
 
 ---
 
@@ -25,9 +25,6 @@ User feedback was collected via in app feedback form, asking users to rate the p
 ### 🔄 Iteration & Improvements
 Based on the collected user feedback, the following improvements were planned and implemented:
 - **Improvement 1**: `Added Buitton to toggke over dark/light mode`
-
-
-
 
 
 
