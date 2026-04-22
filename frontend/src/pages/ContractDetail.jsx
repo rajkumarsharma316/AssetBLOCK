@@ -62,23 +62,35 @@ export default function ContractDetail() {
       const { data: xdrData } = await contractsApi.getFundXdr(id);
 
       if (xdrData.xdr) {
-        // For testnet demo: sign with stored secret
         const secretKey = sessionStorage.getItem('cpe_secret');
-        if (!secretKey) {
-          setError('No signing key found. Please re-login with your secret key.');
-          return;
-        }
+        let signedXdr = '';
 
-        const { Keypair, TransactionBuilder, Networks } = await import('@stellar/stellar-sdk');
-        const keypair = Keypair.fromSecret(secretKey);
-        const tx = TransactionBuilder.fromXDR(xdrData.xdr, Networks.TESTNET);
-        tx.sign(keypair);
+        if (secretKey) {
+          const { Keypair, TransactionBuilder, Networks } = await import('@stellar/stellar-sdk');
+          const keypair = Keypair.fromSecret(secretKey);
+          const tx = TransactionBuilder.fromXDR(xdrData.xdr, Networks.TESTNET);
+          tx.sign(keypair);
+          signedXdr = tx.toXDR();
+        } else {
+          // If no secret key, assume Freighter wallet
+          const { signTransaction, isConnected } = await import('@stellar/freighter-api');
+          if (!(await isConnected())) {
+            throw new Error('Freighter extension not detected. Please install it or login with a secret key.');
+          }
+          const signRes = await signTransaction(xdrData.xdr, { 
+            networkPassphrase: 'Test SDF Network ; September 2015' 
+          });
+          if (signRes.error) {
+            throw new Error(signRes.error);
+          }
+          signedXdr = signRes.signedTxXdr;
+        }
 
         // Submit via Horizon
         const response = await fetch('https://horizon-testnet.stellar.org/transactions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `tx=${encodeURIComponent(tx.toXDR())}`,
+          body: `tx=${encodeURIComponent(signedXdr)}`,
         });
 
         const result = await response.json();
