@@ -17,14 +17,16 @@ services:
         value: 20
       - key: PORT
         value: 3001
-      # Note: You will need to manually set the following variables 
-      # in the Render Dashboard after connecting your repository:
-      # - HORIZON_URL
-      # - NETWORK_PASSPHRASE
-      # - JWT_SECRET
-      # - ENCRYPTION_KEY
-      # - ADMIN_WALLET
-      
+      - key: HORIZON_URL
+        sync: false
+      - key: NETWORK_PASSPHRASE
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: ADMIN_WALLET
+        sync: false
     # Persistent Disk Configuration (COMMENTED OUT FOR FREE TIER)
     # Note: Because this is commented out, your SQLite database (cpe.db) will be deleted
     # whenever the server restarts. To keep data permanently, uncomment this and add a card,
