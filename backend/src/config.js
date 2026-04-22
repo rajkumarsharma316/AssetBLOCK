@@ -25,6 +25,9 @@ const config = {
   monitor: {
     intervalMs: parseInt(process.env.MONITOR_INTERVAL_MS || '30000', 10),
   },
+  admin: {
+    wallet: process.env.ADMIN_WALLET || '', // The public key of the admin user
+  },
 };
 
 export default config;

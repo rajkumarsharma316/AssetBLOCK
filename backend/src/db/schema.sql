@@ -80,3 +80,14 @@ CREATE INDEX IF NOT EXISTS idx_conditions_contract ON conditions(contract_id);
 CREATE INDEX IF NOT EXISTS idx_signers_contract ON signers(contract_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_contract ON transactions(contract_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_public_key);
+
+-- Feedback
+CREATE TABLE IF NOT EXISTS feedback (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  wallet_address TEXT NOT NULL,
+  rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+  description TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+);

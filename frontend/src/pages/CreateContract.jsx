@@ -15,7 +15,7 @@ import {
   Clock,
   Plus,
   Trash2,
-  Zap,
+  Send,
 } from 'lucide-react';
 
 const STEPS = [
@@ -429,7 +429,7 @@ export default function CreateContract() {
                 <><span className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Creating...</>
               ) : (
                 <>
-                  <Zap size={18} />
+                  <Send size={18} />
                   Create Contract
                 </>
               )}

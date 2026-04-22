@@ -61,4 +61,10 @@ export const transactionsApi = {
   forContract: (contractId) => client.get(`/transactions/contract/${contractId}`),
 };
 
+// Feedback API
+export const feedbackApi = {
+  submit: (data) => client.post('/feedback', data),
+  exportCsv: () => client.get('/feedback/export', { responseType: 'blob' }),
+};
+
 export default client;

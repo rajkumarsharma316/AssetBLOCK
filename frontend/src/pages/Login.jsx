@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/client';
 import { generateKeypair, isValidSecretKey, publicKeyFromSecret } from '../utils/stellar';
-import { Zap, Key, RefreshCw, Wallet, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Key, RefreshCw, Wallet, ArrowRight, ShieldCheck } from 'lucide-react';
+import ABLogo from '../components/ABLogo';
 import { isConnected, getAddress, signTransaction, setAllowed } from '@stellar/freighter-api';
 
 export default function Login() {
@@ -137,21 +138,14 @@ export default function Login() {
 
       <div className="login-container">
         <div className="login-logo">
-          <div
+          <ABLogo
+            size={80}
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: 'var(--radius-lg)',
-              background: 'var(--gradient-accent)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               margin: '0 auto 20px',
-              boxShadow: '0 0 40px rgba(6, 182, 212, 0.2)',
+              display: 'block',
+              filter: 'drop-shadow(0 0 30px rgba(6, 182, 212, 0.25))',
             }}
-          >
-            <Zap size={32} color="white" />
-          </div>
+          />
           <h1>AssetBlock</h1>
           <p>Programmable conditional payments on Stellar</p>
         </div>

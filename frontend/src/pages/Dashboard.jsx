@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import ContractCard from '../components/ContractCard';
 import StatusBadge from '../components/StatusBadge';
 import { formatAmount, formatDate, truncateAddress, getExplorerUrl } from '../utils/formatters';
-import { Plus, FileText, Zap, CheckCircle2, Clock, ExternalLink } from 'lucide-react';
+import { Plus, FileText, Activity, CheckCircle2, Clock, ExternalLink } from 'lucide-react';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -75,7 +75,7 @@ export default function Dashboard() {
         </div>
         <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => document.getElementById('active-contracts')?.scrollIntoView({ behavior: 'smooth' })}>
           <div className="stat-card-icon purple">
-            <Zap size={22} />
+            <Activity size={22} />
           </div>
           <div className="stat-card-value">{stats.active}</div>
           <div className="stat-card-label">Active Contracts</div>
@@ -99,7 +99,7 @@ export default function Dashboard() {
       {/* Active Contracts */}
       <div style={{ marginBottom: 40 }} id="active-contracts">
         <h2 className="section-title">
-          <Zap size={20} style={{ color: 'var(--accent-cyan)' }} />
+          <Activity size={20} style={{ color: 'var(--accent-cyan)' }} />
           Active Contracts
         </h2>
         {contracts.filter((c) => ['pending', 'funded', 'active'].includes(c.status)).length === 0 ? (

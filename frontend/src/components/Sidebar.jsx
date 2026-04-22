@@ -5,9 +5,13 @@ import {
   ArrowLeftRight,
   ChevronLeft,
   ChevronRight,
-  Zap,
+  MessageSquareHeart,
+  Download,
   X,
 } from 'lucide-react';
+import { feedbackApi } from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import ABLogo from './ABLogo';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -17,6 +21,31 @@ const navItems = [
 
 export default function Sidebar({ collapsed, onToggle, className = '', isMobile = false }) {
   const location = useLocation();
+  const { user } = useAuth();
+  const isFeedbackActive = location.pathname === '/feedback';
+  
+  // Check if current user is admin
+  const isAdmin = user && user.publicKey === import.meta.env.VITE_ADMIN_WALLET;
+
+  const handleExportFeedback = async () => {
+    try {
+      const response = await feedbackApi.exportCsv();
+      
+      // Create a blob from the response and trigger download
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'assetblock_feedback.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export feedback:', err);
+      alert('Failed to export feedback. Make sure you are an admin.');
+    }
+  };
 
   return (
     <aside
@@ -36,7 +65,7 @@ export default function Sidebar({ collapsed, onToggle, className = '', isMobile 
         overflow: 'hidden',
       }}
     >
-      {/* Logo */}
+      {/* Logo + Collapse Toggle */}
       <div
         style={{
           padding: collapsed && !isMobile ? '24px 16px' : '24px 20px',
@@ -49,20 +78,7 @@ export default function Sidebar({ collapsed, onToggle, className = '', isMobile 
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 'var(--radius-md)',
-              background: 'var(--gradient-accent)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <Zap size={22} color="white" />
-          </div>
+          <ABLogo size={40} />
           {(!collapsed || isMobile) && (
             <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
               <div style={{ fontWeight: 800, fontSize: '1rem', lineHeight: 1.2 }}>AssetBlock</div>
@@ -72,8 +88,9 @@ export default function Sidebar({ collapsed, onToggle, className = '', isMobile 
             </div>
           )}
         </div>
-        {/* Close button on mobile */}
-        {isMobile && (
+
+        {/* Collapse toggle (desktop) / Close button (mobile) */}
+        {isMobile ? (
           <button
             onClick={onToggle}
             style={{
@@ -88,6 +105,28 @@ export default function Sidebar({ collapsed, onToggle, className = '', isMobile 
             }}
           >
             <X size={20} />
+          </button>
+        ) : (
+          <button
+            onClick={onToggle}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            style={{
+              background: 'var(--bg-glass)',
+              border: '1px solid var(--border-primary)',
+              color: 'var(--text-tertiary)',
+              cursor: 'pointer',
+              padding: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 'var(--radius-sm)',
+              transition: 'all var(--transition-fast)',
+              flexShrink: 0,
+              width: 28,
+              height: 28,
+            }}
+          >
+            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         )}
       </div>
@@ -128,27 +167,82 @@ export default function Sidebar({ collapsed, onToggle, className = '', isMobile 
         })}
       </nav>
 
-      {/* Collapse Toggle (desktop only) */}
-      {!isMobile && (
-        <button
-          onClick={onToggle}
+      {/* Feedback Link (bottom) */}
+      <div
+        style={{
+          padding: '8px 8px 16px',
+          borderTop: '1px solid var(--border-primary)',
+        }}
+      >
+        <Link
+          to="/feedback"
           style={{
-            padding: '16px',
-            borderTop: '1px solid var(--border-primary)',
-            background: 'none',
-            border: 'none',
-            borderTop: '1px solid var(--border-primary)',
-            color: 'var(--text-tertiary)',
-            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'color var(--transition-fast)',
+            gap: 12,
+            padding: '12px 16px',
+            borderRadius: 'var(--radius-md)',
+            color: isFeedbackActive ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+            background: isFeedbackActive ? 'rgba(6, 182, 212, 0.08)' : 'transparent',
+            border: isFeedbackActive ? '1px solid rgba(6, 182, 212, 0.2)' : '1px solid transparent',
+            fontWeight: isFeedbackActive ? 600 : 500,
+            fontSize: '0.88rem',
+            transition: 'all var(--transition-fast)',
+            textDecoration: 'none',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            justifyContent: collapsed && !isMobile ? 'center' : 'flex-start',
+            minHeight: 44,
           }}
+          title={collapsed && !isMobile ? 'Feedback' : undefined}
         >
-          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-        </button>
-      )}
+          <MessageSquareHeart size={20} style={{ flexShrink: 0 }} />
+          {(!collapsed || isMobile) && 'Feedback'}
+        </Link>
+        
+        {/* Admin Section */}
+        {isAdmin && (
+          <div style={{ marginTop: 16 }}>
+            {(!collapsed || isMobile) && (
+              <div style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '0 16px', marginBottom: 8 }}>
+                Admin Options
+              </div>
+            )}
+            <button
+              onClick={handleExportFeedback}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '12px 16px',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--text-secondary)',
+                background: 'transparent',
+                border: '1px solid transparent',
+                fontWeight: 500,
+                fontSize: '0.88rem',
+                transition: 'all var(--transition-fast)',
+                cursor: 'pointer',
+                justifyContent: collapsed && !isMobile ? 'center' : 'flex-start',
+                minHeight: 44,
+              }}
+              title={collapsed && !isMobile ? 'Export Feedback CSV' : undefined}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--text-primary)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--text-secondary)';
+                e.currentTarget.style.background = 'transparent';
+              }}
+            >
+              <Download size={20} style={{ flexShrink: 0 }} />
+              {(!collapsed || isMobile) && 'Export Feedback'}
+            </button>
+          </div>
+        )}
+      </div>
     </aside>
   );
 }

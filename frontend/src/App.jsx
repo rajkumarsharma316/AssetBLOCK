@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import CreateContract from './pages/CreateContract';
 import ContractDetail from './pages/ContractDetail';
 import Transactions from './pages/Transactions';
+import Feedback from './pages/Feedback';
 import Login from './pages/Login';
 
 function ProtectedRoute({ children }) {
@@ -69,6 +70,7 @@ function AppLayout() {
           <Route path="/create" element={<CreateContract />} />
           <Route path="/contract/:id" element={<ContractDetail />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/feedback" element={<Feedback />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

@@ -20,7 +20,7 @@ import {
   Clock,
   Users,
   Shield,
-  Zap,
+  Settings,
   Copy,
 } from 'lucide-react';
 
@@ -375,7 +375,7 @@ export default function ContractDetail() {
           {/* Actions */}
           <div className="glass-card no-hover">
             <h3 className="section-title">
-              <Zap size={18} style={{ color: 'var(--accent-amber)' }} />
+              <Settings size={18} style={{ color: 'var(--accent-amber)' }} />
               Actions
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

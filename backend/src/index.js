@@ -5,6 +5,7 @@ import { getDb } from './db/database.js';
 import authRoutes from './routes/auth.js';
 import contractRoutes from './routes/contracts.js';
 import transactionRoutes from './routes/transactions.js';
+import feedbackRoutes from './routes/feedback.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { startMonitor } from './services/monitor.js';
 import logger from './utils/logger.js';
@@ -12,7 +13,7 @@ import logger from './utils/logger.js';
 const app = express();
 
 // Middleware
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'], credentials: true }));
+app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'], credentials: true }));
 app.use(express.json());
 
 // Initialize database
@@ -22,6 +23,7 @@ getDb();
 app.use('/api/auth', authRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
