@@ -4,6 +4,7 @@ services:
   - type: web
     name: assetblock-backend
     env: node
+    plan: free
     # Since it's a monorepo, we tell Render the code is in the backend folder
     rootDir: backend
     # Build command to install dependencies
