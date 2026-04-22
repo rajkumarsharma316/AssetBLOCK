@@ -1,0 +1,35 @@
+# render.yaml
+# Configuration for deploying the AssetBlock backend to Render.com
+services:
+  - type: web
+    name: assetblock-backend
+    env: node
+    # Since it's a monorepo, we tell Render the code is in the backend folder
+    rootDir: backend
+    # Build command to install dependencies
+    buildCommand: npm install
+    # Start command to run the server
+    startCommand: npm start
+    # We specify the Node version to ensure compatibility
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: 3001
+      # Note: You will need to manually set the following variables 
+      # in the Render Dashboard after connecting your repository:
+      # - HORIZON_URL
+      # - NETWORK_PASSPHRASE
+      # - JWT_SECRET
+      # - ENCRYPTION_KEY
+      # - ADMIN_WALLET
+      
+    # Persistent Disk Configuration
+    # This is CRITICAL for SQLite! It ensures your cpe.db file is not deleted when the server restarts.
+    disk:
+      name: assetblock-data
+      # 1 GB is plenty for a SQLite database and feedback CSVs
+      sizeGB: 1
+      # This mount path must match exactly where your backend code looks for the 'data' folder
+      # Since rootDir is 'backend', the relative path is just 'data'
+      mountPath: /opt/render/project/src/backend/data
