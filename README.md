@@ -62,16 +62,14 @@ Based on the collected user feedback, the following improvements were planned an
 <!-- PLACEHOLDER: Insert desktop screenshots here -->
 
 <p align="center">
-  <img src="https://via.placeholder.com/800x450.png?text=Desktop+Dashboard+Screenshot" alt="Desktop Dashboard" width="48%" />
   <img width="1919" height="911" alt="image" src="https://github.com/user-attachments/assets/77c7fb71-7081-46a6-9322-7bcae8a733ae" />
+  <img width="1919" height="899" alt="image" src="https://github.com/user-attachments/assets/090055f6-33b0-4808-9d6a-95d35db05c83" />
 </p>
 
 ### Mobile Experience
 <!-- PLACEHOLDER: Insert mobile screenshots here -->
 <p align="center">
-  <img width="459" height="803" alt="image" src="https://github.com/user-attachments/assets/3c3bf418-947b-42bf-95fa-4dfad43b8894" />
-  <img width="423" height="801" alt="image" src="https://github.com/user-attachments/assets/74cd9461-c3fa-47ef-9c76-ad0769fe5299" />
-  <img width="434" height="805" alt="image" src="https://github.com/user-attachments/assets/96fa56a6-ab46-46ac-8bc9-757d33c3230e" />
+  <img width="423" height="801" alt="image" src="https://github.com/user-attachments/assets/3c3bf418-947b-42bf-95fa-4dfad43b8894" /> <img width="423" height="801" alt="image" src="https://github.com/user-attachments/assets/74cd9461-c3fa-47ef-9c76-ad0769fe5299" /> <img width="423" height="801" alt="image" src="https://github.com/user-attachments/assets/96fa56a6-ab46-46ac-8bc9-757d33c3230e" />
 </p>
 
 ---
