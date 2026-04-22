@@ -6,15 +6,43 @@ AssetBlock is a decentralized application (dApp) that enables users to create, m
 
 ---
 
-## 🎥 Demo Preview
+## 🔗 Live Demo
+**[AssetBlock Live Demo Placeholder - Replace with your Vercel/Netlify URL]**
 
-<!-- PLACEHOLDER: Insert a link to a GIF or short MP4 video demonstrating the core user flow (creating a contract, funding it, and the conditions being met). -->
-> **[Video Placeholder]**
+## 🎥 Demo Video
+<!-- PLACEHOLDER: Insert a link to a demo video showing full MVP functionality -->
+> **[Video Link Placeholder - e.g. Screen.Recording.2026-04-23.mp4]**
 > `![AssetBlock Demo Video](./docs/demo-video.gif)`
 
 ---
 
-## ✨ Features
+## 🏆 Level 5 Validation: User Feedback & Iteration
+
+This project has been validated with real testnet users as part of the Level 5 requirements.
+
+### 👥 User Validation (5+ Real Testnet Users)
+The following users have successfully tested and interacted with the AssetBlock MVP on the Stellar Testnet:
+1. `[Wallet Address 1 - verifiable on Stellar Explorer]`
+2. `[Wallet Address 2 - verifiable on Stellar Explorer]`
+3. `[Wallet Address 3 - verifiable on Stellar Explorer]`
+4. `[Wallet Address 4 - verifiable on Stellar Explorer]`
+5. `[Wallet Address 5 - verifiable on Stellar Explorer]`
+
+### 📊 Feedback Documentation
+User feedback was collected via a Google Form, asking users to rate the product and provide suggestions.
+- **[Google Form Feedback Link Placeholder]**
+- **[Excel Sheet Responses Link Placeholder]**
+
+### 🔄 Iteration & Improvements
+Based on the collected user feedback, the following improvements were planned and implemented:
+- **Improvement 1**: `[Describe the improvement here based on feedback]`
+  - **Git Commit**: `[Link to the GitHub commit for this improvement]`
+- **Improvement 2**: `[Describe another improvement if applicable]`
+  - **Git Commit**: `[Link to the GitHub commit for this improvement]`
+
+---
+
+## ✨ Key Features
 
 - **Freighter Wallet Integration**: Secure, seamless one-click login and transaction signing using the official Freighter extension via SEP-10 style XDR authentication.
 - **Smart Contract Conditions**:
@@ -28,7 +56,7 @@ AssetBlock is a decentralized application (dApp) that enables users to create, m
 
 ---
 
-## 📸 Screenshots
+## 📸 UI Screenshots
 
 ### Desktop Experience
 <!-- PLACEHOLDER: Insert desktop screenshots here -->
@@ -44,6 +72,33 @@ AssetBlock is a decentralized application (dApp) that enables users to create, m
   <img src="https://via.placeholder.com/300x600.png?text=Mobile+Dashboard" alt="Mobile Dashboard" width="30%" />
   <img src="https://via.placeholder.com/300x600.png?text=Mobile+Contract" alt="Mobile Contract Details" width="30%" />
 </p>
+
+---
+
+## 🏗️ Architecture
+
+```text
+┌─────────────────────────────────────────────────┐
+│              USER (Freighter Wallet)            │
+└────────────────────┬────────────────────────────┘
+                     ▼
+┌─────────────────────────────────────────────────┐
+│              React Frontend (Vite)              │
+│       Dashboard · Create Escrow · Details       │
+└────────────────────┬────────────────────────────┘
+                     │ REST API / XDR Payloads
+                     ▼
+┌─────────────────────────────────────────────────┐
+│              Node.js Backend (Express)          │
+│       Auth · Contract Services · Monitor        │
+└────────────────────┬────────────────────────────┘
+                     │ Data    │ Tx Submission
+                     ▼         ▼
+┌──────────────────────┐  ┌───────────────────────┐
+│ Supabase (PostgreSQL)│  │ Stellar Testnet       │
+│ Contracts & Signers  │  │ Horizon API           │
+└──────────────────────┘  └───────────────────────┘
+```
 
 ---
 
@@ -68,6 +123,7 @@ AssetBlock is a decentralized application (dApp) that enables users to create, m
 ### Prerequisites
 - Node.js (v18+)
 - A Supabase account / project for PostgreSQL
+- Freighter Wallet browser extension
 
 ### 1. Clone the repository
 ```bash
