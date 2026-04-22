@@ -6,14 +6,12 @@ AssetBlock is a decentralized application (dApp) that enables users to create, m
 
 ---
 
-## 🔗 Live Demo
+## 🔗 Live App
 https://asset-block.vercel.app/
 
-## 🎥 Demo Video
+## 🎥 Video
 <!-- PLACEHOLDER: Insert a link to a demo video showing full MVP functionality -->
-[> **[Video Link Placeholder - e.g. Screen.Recording.2026-04-23.mp4]**
-](https://github.com/user-attachments/assets/76a81a99-593a-4a28-84d3-9a4e2aae8acb
-)> `![AssetBlock Demo Video](./docs/demo-video.gif)`
+(https://github.com/user-attachments/assets/76a81a99-593a-4a28-84d3-9a4e2aae8acb)
 
 ---
 
