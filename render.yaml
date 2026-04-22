@@ -24,12 +24,11 @@ services:
       # - ENCRYPTION_KEY
       # - ADMIN_WALLET
       
-    # Persistent Disk Configuration
-    # This is CRITICAL for SQLite! It ensures your cpe.db file is not deleted when the server restarts.
-    disk:
-      name: assetblock-data
-      # 1 GB is plenty for a SQLite database and feedback CSVs
-      sizeGB: 1
-      # This mount path must match exactly where your backend code looks for the 'data' folder
-      # Since rootDir is 'backend', the relative path is just 'data'
-      mountPath: /opt/render/project/src/backend/data
+    # Persistent Disk Configuration (COMMENTED OUT FOR FREE TIER)
+    # Note: Because this is commented out, your SQLite database (cpe.db) will be deleted
+    # whenever the server restarts. To keep data permanently, uncomment this and add a card,
+    # or switch to a cloud database like Supabase/Neon.
+    # disk:
+    #   name: assetblock-data
+    #   sizeGB: 1
+    #   mountPath: /opt/render/project/src/backend/data
