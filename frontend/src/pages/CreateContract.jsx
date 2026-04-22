@@ -92,7 +92,18 @@ export default function CreateContract() {
         amount: form.amount,
         assetCode: form.assetCode,
         destination: form.destination,
-        conditions: form.conditions,
+        conditions: form.conditions.map(cond => {
+          if (cond.type === 'time' && cond.params.releaseAfter) {
+            return {
+              ...cond,
+              params: {
+                ...cond.params,
+                releaseAfter: new Date(cond.params.releaseAfter).toISOString()
+              }
+            };
+          }
+          return cond;
+        }),
         signers: form.signers.map((s) => ({ publicKey: s })),
         threshold: form.threshold,
       };
