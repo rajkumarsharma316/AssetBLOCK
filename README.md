@@ -20,6 +20,8 @@ https://github.com/user-attachments/assets/76a81a99-593a-4a28-84d3-9a4e2aae8acb
 ### 📊 Feedback Documentation
 User feedback was collected via in app feedback form, asking users to rate the product and provide suggestions.
 
+<img width="1857" height="184" alt="image" src="https://github.com/user-attachments/assets/ef30586d-3c70-44b9-bda8-bdeee149f0b9" />
+
 https://github.com/user-attachments/files/26983192/feedback.csv.xlsx
 
 
