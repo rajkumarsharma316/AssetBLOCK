@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
-import { Keypair } from '@stellar/stellar-sdk';
+import { Keypair, TransactionBuilder, Networks, Account, Transaction, Operation } from '@stellar/stellar-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import { findOne, insert } from '../db/database.js';
 import { getNotifications, markRead, markAllRead } from '../services/notifications.js';
@@ -31,7 +31,18 @@ router.post('/challenge', (req, res) => {
     return res.status(400).json({ error: 'Invalid Stellar public key' });
   }
 
-  const challenge = `CPE-Auth-${uuidv4()}-${Date.now()}`;
+  // Build a dummy auth transaction for Freighter to sign
+  const tempAccount = new Account(publicKey, "0");
+  const tx = new TransactionBuilder(tempAccount, { fee: "100", networkPassphrase: Networks.TESTNET })
+    .addOperation(Operation.manageData({
+      name: 'Auth_Challenge',
+      value: `${uuidv4()}`.substring(0, 32),
+      source: publicKey
+    }))
+    .setTimeout(300)
+    .build();
+
+  const challenge = tx.toXDR();
   pendingChallenges.set(publicKey, { challenge, createdAt: Date.now() });
 
   // Clean up old challenges (older than 5 minutes)
@@ -78,11 +89,18 @@ router.post('/login', (req, res) => {
     }
 
     try {
-      const kp = Keypair.fromPublicKey(publicKey);
-      const challengeBuffer = Buffer.from(pending.challenge, 'utf-8');
-      const signatureBuffer = Buffer.from(signedChallenge, 'base64');
-      verified = kp.verify(challengeBuffer, signatureBuffer);
-    } catch {
+      // Freighter mode: verify the signature within the signed XDR
+      const signedTx = new Transaction(signedChallenge, Networks.TESTNET);
+      
+      // Extract the signatures
+      const signatures = signedTx.signatures;
+      if (signatures.length > 0) {
+        const kp = Keypair.fromPublicKey(publicKey);
+        const txHash = signedTx.hash();
+        verified = kp.verify(txHash, signatures[0].signature());
+      }
+    } catch (err) {
+      console.error("Signature verification error:", err);
       verified = false;
     }
 

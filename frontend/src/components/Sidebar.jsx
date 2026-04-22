@@ -65,9 +65,9 @@ export default function Sidebar({ collapsed, onToggle, className = '', isMobile 
           </div>
           {(!collapsed || isMobile) && (
             <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-              <div style={{ fontWeight: 800, fontSize: '1rem', lineHeight: 1.2 }}>CPE</div>
+              <div style={{ fontWeight: 800, fontSize: '1rem', lineHeight: 1.2 }}>AssetBlock</div>
               <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', letterSpacing: '0.06em' }}>
-                PAYMENT ENGINE
+                SMART PAYMENTS
               </div>
             </div>
           )}

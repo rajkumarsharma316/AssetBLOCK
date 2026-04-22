@@ -1,13 +1,19 @@
 import { Keypair } from '@stellar/stellar-sdk';
+import stellarHDWallet from 'stellar-hd-wallet';
 
 /**
- * Generate a new random Stellar keypair.
+ * Generate a new random Stellar keypair and standard 24-word mnemonic phrase.
  */
 export function generateKeypair() {
-  const pair = Keypair.random();
+  const mnemonic = stellarHDWallet.generateMnemonic();
+  const wallet = stellarHDWallet.fromMnemonic(mnemonic);
+  const publicKey = wallet.getPublicKey(0);
+  const secretKey = wallet.getSecret(0);
+
   return {
-    publicKey: pair.publicKey(),
-    secretKey: pair.secret(),
+    publicKey,
+    secretKey,
+    mnemonic,
   };
 }
 

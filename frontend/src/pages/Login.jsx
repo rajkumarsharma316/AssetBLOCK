@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/client';
 import { generateKeypair, isValidSecretKey, publicKeyFromSecret } from '../utils/stellar';
-import { Zap, Key, RefreshCw, Wallet, ArrowRight } from 'lucide-react';
+import { Zap, Key, RefreshCw, Wallet, ArrowRight, ShieldCheck } from 'lucide-react';
+import { isConnected, getAddress, signTransaction, setAllowed } from '@stellar/freighter-api';
 
 export default function Login() {
   const { login } = useAuth();
@@ -65,6 +66,45 @@ export default function Login() {
   const handleGeneratedLogin = () => {
     if (!keyPair) return;
     handleLogin(keyPair.publicKey, keyPair.secretKey, true);
+  };
+
+  const handleFreighterLogin = async () => {
+    setLoading(true);
+    setError('');
+    setStatus('Connecting to Freighter...');
+    try {
+      if (!(await isConnected())) {
+        throw new Error('Freighter extension not detected. Please install it.');
+      }
+      await setAllowed();
+      const addrRes = await getAddress();
+      if (addrRes.error) throw new Error(addrRes.error);
+      const publicKey = addrRes.address;
+      
+      setStatus('Requesting auth challenge...');
+      const { data } = await authApi.getChallenge(publicKey);
+      
+      setStatus('Please sign the challenge in Freighter...');
+      // Pass the exact Passphrase so Freighter v6 knows it is Testnet
+      const signRes = await signTransaction(data.challenge || data.transaction, { 
+        networkPassphrase: 'Test SDF Network ; September 2015' 
+      });
+      
+      if (signRes.error) {
+        throw new Error(signRes.error);
+      }
+      const signedChallenge = signRes.signedTxXdr;
+      
+      setStatus('Authenticating...');
+      await login({ publicKey, signedChallenge });
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+      setError(err.message || err.response?.data?.error || 'Freighter login failed.');
+    } finally {
+      setLoading(false);
+      setStatus('');
+    }
   };
 
   return (
@@ -135,7 +175,7 @@ export default function Login() {
               style={{ flex: 1, padding: '10px 4px', fontSize: '0.85rem' }}
             >
               <RefreshCw size={16} style={{ flexShrink: 0 }} />
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>New Wallet</span>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>New</span>
             </button>
             <button
               type="button"
@@ -144,7 +184,16 @@ export default function Login() {
               style={{ flex: 1, padding: '10px 4px', fontSize: '0.85rem' }}
             >
               <Key size={16} style={{ flexShrink: 0 }} />
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>Import Key</span>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>Import</span>
+            </button>
+            <button
+              type="button"
+              className={`btn ${mode === 'freighter' ? 'btn-primary' : 'btn-ghost'}`}
+              onClick={() => { setMode('freighter'); setError(''); }}
+              style={{ flex: 1, padding: '10px 4px', fontSize: '0.85rem' }}
+            >
+              <ShieldCheck size={16} style={{ flexShrink: 0 }} />
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>Freighter</span>
             </button>
           </div>
 
@@ -189,7 +238,7 @@ export default function Login() {
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Secret Key (save this!)</label>
+                    <label className="form-label">Secret Key</label>
                     <input
                       type="text"
                       className="form-input mono"
@@ -197,10 +246,22 @@ export default function Login() {
                       readOnly
                       style={{ fontSize: '0.65rem', overflow: 'hidden', textOverflow: 'ellipsis' }}
                     />
-                    <span className="form-hint" style={{ color: 'var(--accent-amber)' }}>
-                      ⚠ Save your secret key! You'll need it to log back in.
-                    </span>
                   </div>
+                  {keyPair.mnemonic && (
+                     <div className="form-group" style={{ marginBottom: 28 }}>
+                       <label className="form-label" style={{ color: 'var(--accent-cyan)' }}>Secret Recovery Phrase (For Freighter)</label>
+                       <textarea
+                         className="form-textarea mono"
+                         value={keyPair.mnemonic}
+                         readOnly
+                         rows={3}
+                         style={{ fontSize: '0.75rem', resize: 'none', background: 'rgba(0, 240, 255, 0.05)', borderColor: 'var(--accent-cyan)' }}
+                       />
+                       <span className="form-hint" style={{ color: 'var(--accent-amber)', marginTop: 4 }}>
+                         ⚠ Save your secret key or phrase! You'll need it to log back in.
+                       </span>
+                     </div>
+                  )}
 
                   <button
                     className="btn btn-primary btn-lg"
@@ -220,7 +281,7 @@ export default function Login() {
                 </div>
               )}
             </div>
-          ) : (
+          ) : mode === 'import' ? (
             <div>
               <div className="form-group">
                 <label className="form-label">Secret Key</label>
@@ -246,6 +307,37 @@ export default function Login() {
                   <>
                     <Key size={18} />
                     Sign In
+                  </>
+                )}
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                <div style={{
+                  width: 64, height: 64, margin: '0 auto 16px', background: 'var(--bg-card)', 
+                  border: '1px solid var(--border-primary)', borderRadius: '50%', 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <ShieldCheck size={32} color="var(--accent-cyan)" />
+                </div>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                  Connect your Freighter wallet to sign in securely. We will request a cryptographic signature to verify your identity.
+                </p>
+              </div>
+
+              <button
+                className="btn btn-primary btn-lg"
+                onClick={handleFreighterLogin}
+                disabled={loading}
+                style={{ width: '100%' }}
+              >
+                {loading ? (
+                  <><span className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> {status || 'Connecting...'}</>
+                ) : (
+                  <>
+                    <ShieldCheck size={18} />
+                    Connect Freighter Wallet
                   </>
                 )}
               </button>

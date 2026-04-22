@@ -2,13 +2,23 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { truncateAddress, formatRelativeTime } from '../utils/formatters';
 import { authApi } from '../api/client';
-import { Bell, LogOut, Wallet, ExternalLink, Menu } from 'lucide-react';
+import { Bell, LogOut, Wallet, ExternalLink, Menu, Sun, Moon } from 'lucide-react';
 
 export default function Navbar({ onMenuToggle }) {
   const { user, logout, notifications, fetchNotifications } = useAuth();
   const [showNotif, setShowNotif] = useState(false);
   const notifRef = useRef(null);
   const unreadCount = notifications.filter((n) => !n.read).length;
+  
+  // Theme Toggle State
+  const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme') || 'dark');
+
+  const handleToggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('cpe_theme', newTheme);
+  };
 
   useEffect(() => {
     function handleClick(e) {
@@ -42,7 +52,6 @@ export default function Navbar({ onMenuToggle }) {
         top: 0,
         zIndex: 50,
         minWidth: 0,
-        overflow: 'hidden',
       }}
     >
       {/* Left side: Hamburger (mobile only) */}
@@ -77,6 +86,15 @@ export default function Navbar({ onMenuToggle }) {
           {parseFloat(user.balance).toFixed(2)} XLM
         </div>
       )}
+
+      {/* Theme Toggle */}
+      <button
+        className="btn btn-ghost btn-icon"
+        onClick={handleToggleTheme}
+        title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      >
+        {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
 
       {/* Notifications */}
       <div ref={notifRef} style={{ position: 'relative' }}>

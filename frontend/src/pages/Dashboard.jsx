@@ -66,21 +66,21 @@ export default function Dashboard() {
 
       {/* Stats */}
       <div className="stats-grid">
-        <div className="stat-card">
+        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => document.getElementById('active-contracts')?.scrollIntoView({ behavior: 'smooth' })}>
           <div className="stat-card-icon cyan">
             <FileText size={22} />
           </div>
           <div className="stat-card-value">{stats.total}</div>
           <div className="stat-card-label">Total Contracts</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => document.getElementById('active-contracts')?.scrollIntoView({ behavior: 'smooth' })}>
           <div className="stat-card-icon purple">
             <Zap size={22} />
           </div>
           <div className="stat-card-value">{stats.active}</div>
           <div className="stat-card-label">Active Contracts</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => document.getElementById('completed-contracts')?.scrollIntoView({ behavior: 'smooth' })}>
           <div className="stat-card-icon green">
             <CheckCircle2 size={22} />
           </div>
@@ -97,23 +97,25 @@ export default function Dashboard() {
       </div>
 
       {/* Active Contracts */}
-      <div style={{ marginBottom: 40 }}>
+      <div style={{ marginBottom: 40 }} id="active-contracts">
         <h2 className="section-title">
           <Zap size={20} style={{ color: 'var(--accent-cyan)' }} />
           Active Contracts
         </h2>
         {contracts.filter((c) => ['pending', 'funded', 'active'].includes(c.status)).length === 0 ? (
-          <div className="glass-card no-hover">
-            <div className="empty-state">
-              <div className="empty-state-icon">📝</div>
-              <h3>No active contracts</h3>
-              <p>Create your first conditional payment contract to get started.</p>
-              <Link to="/create" className="btn btn-primary">
-                <Plus size={16} />
-                Create Contract
-              </Link>
+          <Link to="/create" style={{ textDecoration: 'none', display: 'block' }}>
+            <div className="glass-card" style={{ cursor: 'pointer', transition: 'all var(--transition-fast)' }}>
+              <div className="empty-state">
+                <div className="empty-state-icon">📝</div>
+                <h3>No active contracts</h3>
+                <p>Create your first conditional payment contract to get started.</p>
+                <div className="btn btn-primary" style={{ marginTop: 16 }}>
+                  <Plus size={16} />
+                  Create Contract
+                </div>
+              </div>
             </div>
-          </div>
+          </Link>
         ) : (
           <div className="contracts-grid">
             {contracts
@@ -188,7 +190,7 @@ export default function Dashboard() {
 
       {/* Completed Contracts */}
       {contracts.filter((c) => c.status === 'completed').length > 0 && (
-        <div style={{ marginTop: 40 }}>
+        <div style={{ marginTop: 40 }} id="completed-contracts">
           <h2 className="section-title">
             <CheckCircle2 size={20} style={{ color: 'var(--status-success)' }} />
             Completed Contracts

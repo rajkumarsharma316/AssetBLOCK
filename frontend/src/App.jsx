@@ -77,6 +77,12 @@ function AppLayout() {
 }
 
 export default function App() {
+  useEffect(() => {
+    // Initialize theme from localStorage or default to dark
+    const savedTheme = localStorage.getItem('cpe_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
   return (
     <BrowserRouter>
       <AuthProvider>
