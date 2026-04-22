@@ -35,13 +35,13 @@ export async function createEscrow(contractId, signerPublicKeys, creatorPublicKe
   const encryptedSecret = encrypt(secretKey);
 
   // Update contract with escrow info
-  run(
-    'UPDATE contracts SET escrow_public_key = ?, escrow_secret_encrypted = ?, updated_at = datetime(\'now\') WHERE id = ?',
-    [publicKey, encryptedSecret, contractId]
+  await run('contracts',
+    { escrow_public_key: publicKey, escrow_secret_encrypted: encryptedSecret, updated_at: new Date().toISOString() },
+    { id: contractId }
   );
 
   // Log the escrow creation transaction
-  insert('transactions', {
+  await insert('transactions', {
     id: uuidv4(),
     contract_id: contractId,
     tx_hash: null,
@@ -61,7 +61,7 @@ export async function createEscrow(contractId, signerPublicKeys, creatorPublicKe
  * Backend builds the XDR for the client to sign.
  */
 export async function buildFundTransaction(contractId, senderPublicKey) {
-  const contract = findOne('SELECT * FROM contracts WHERE id = ?', [contractId]);
+  const contract = await findOne('contracts', { id: contractId });
   if (!contract) throw new Error('Contract not found');
   if (!contract.escrow_public_key) throw new Error('Escrow not yet created');
 
@@ -90,19 +90,21 @@ export async function buildFundTransaction(contractId, senderPublicKey) {
 /**
  * Mark a contract as funded after the client submits the fund transaction.
  */
-export function markFunded(contractId, txHash) {
-  run(
-    'UPDATE contracts SET status = \'funded\', updated_at = datetime(\'now\') WHERE id = ?',
-    [contractId]
+export async function markFunded(contractId, txHash) {
+  await run('contracts',
+    { status: 'funded', updated_at: new Date().toISOString() },
+    { id: contractId }
   );
 
-  insert('transactions', {
+  const contract = await findOne('contracts', { id: contractId });
+
+  await insert('transactions', {
     id: uuidv4(),
     contract_id: contractId,
     tx_hash: txHash,
     type: 'fund',
     status: 'confirmed',
-    amount: findOne('SELECT amount FROM contracts WHERE id = ?', [contractId])?.amount,
+    amount: contract?.amount || '0',
     details: null,
   });
 
@@ -114,7 +116,7 @@ export function markFunded(contractId, txHash) {
  * Uses the encrypted escrow secret to sign.
  */
 export async function releaseEscrow(contractId) {
-  const contract = findOne('SELECT * FROM contracts WHERE id = ?', [contractId]);
+  const contract = await findOne('contracts', { id: contractId });
   if (!contract) throw new Error('Contract not found');
   if (!contract.escrow_secret_encrypted) throw new Error('No escrow secret');
 
@@ -148,12 +150,12 @@ export async function releaseEscrow(contractId) {
   const result = await stellarService.submitTransaction(tx);
 
   // Update contract status
-  run(
-    'UPDATE contracts SET status = \'completed\', updated_at = datetime(\'now\') WHERE id = ?',
-    [contractId]
+  await run('contracts',
+    { status: 'completed', updated_at: new Date().toISOString() },
+    { id: contractId }
   );
 
-  insert('transactions', {
+  await insert('transactions', {
     id: uuidv4(),
     contract_id: contractId,
     tx_hash: result.hash,
@@ -171,7 +173,7 @@ export async function releaseEscrow(contractId) {
  * Refund escrow back to the creator.
  */
 export async function refundEscrow(contractId) {
-  const contract = findOne('SELECT * FROM contracts WHERE id = ?', [contractId]);
+  const contract = await findOne('contracts', { id: contractId });
   if (!contract) throw new Error('Contract not found');
   if (!contract.escrow_secret_encrypted) throw new Error('No escrow secret');
 
@@ -212,12 +214,12 @@ export async function refundEscrow(contractId) {
   tx.sign(escrowKeypair);
   const result = await stellarService.submitTransaction(tx);
 
-  run(
-    'UPDATE contracts SET status = \'cancelled\', updated_at = datetime(\'now\') WHERE id = ?',
-    [contractId]
+  await run('contracts',
+    { status: 'cancelled', updated_at: new Date().toISOString() },
+    { id: contractId }
   );
 
-  insert('transactions', {
+  await insert('transactions', {
     id: uuidv4(),
     contract_id: contractId,
     tx_hash: result.hash,

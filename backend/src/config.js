@@ -8,6 +8,10 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, '..', '.env') });
 
 const config = {
+  supabase: {
+    url: process.env.SUPABASE_URL || '',
+    serviceKey: process.env.SUPABASE_SERVICE_KEY || '',
+  },
   horizon: {
     url: process.env.HORIZON_URL || 'https://horizon-testnet.stellar.org',
     networkPassphrase: process.env.NETWORK_PASSPHRASE || 'Test SDF Network ; September 2015',

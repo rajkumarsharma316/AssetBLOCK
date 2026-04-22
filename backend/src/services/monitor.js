@@ -50,12 +50,19 @@ export function stopMonitor() {
  * Check all active/funded contracts and evaluate their conditions.
  */
 async function checkAllContracts() {
-  // Get contracts that are funded and have conditions to check
-  const activeContracts = findAll(
-    "SELECT * FROM contracts WHERE status IN ('funded', 'active')"
-  );
+  // Get contracts that are funded — use supabase 'in' filter
+  const { supabase } = await import('../db/database.js');
+  const { data: activeContracts, error } = await supabase
+    .from('contracts')
+    .select('*')
+    .in('status', ['funded', 'active']);
 
-  if (activeContracts.length === 0) return;
+  if (error) {
+    logger.error('Failed to fetch active contracts', { error: error.message });
+    return;
+  }
+
+  if (!activeContracts || activeContracts.length === 0) return;
 
   logger.debug(`Checking ${activeContracts.length} active contracts`);
 
@@ -75,10 +82,7 @@ async function checkAllContracts() {
  * Check a single contract's conditions and trigger release if all met.
  */
 async function checkContract(contract) {
-  const conditions = findAll(
-    'SELECT * FROM conditions WHERE contract_id = ?',
-    [contract.id]
-  );
+  const conditions = await findAll('conditions', { contract_id: contract.id });
 
   if (conditions.length === 0) {
     // No conditions — auto-release if funded
@@ -96,11 +100,11 @@ async function checkContract(contract) {
 
     const isMet = evaluateCondition(condition);
     if (isMet) {
-      run(
-        "UPDATE conditions SET is_met = 1, met_at = datetime('now') WHERE id = ?",
-        [condition.id]
+      await run('conditions',
+        { is_met: true, met_at: new Date().toISOString() },
+        { id: condition.id }
       );
-      condition.is_met = 1;
+      condition.is_met = true;
       anyUpdated = true;
 
       logger.info('Condition met', {
@@ -123,18 +127,18 @@ async function checkContract(contract) {
   if (allMet) {
     // Mark contract as active if it was just funded
     if (contract.status === 'funded') {
-      run(
-        "UPDATE contracts SET status = 'active', updated_at = datetime('now') WHERE id = ?",
-        [contract.id]
+      await run('contracts',
+        { status: 'active', updated_at: new Date().toISOString() },
+        { id: contract.id }
       );
     }
     await triggerRelease(contract);
   } else if (anyUpdated) {
     // At least mark it active
     if (contract.status === 'funded') {
-      run(
-        "UPDATE contracts SET status = 'active', updated_at = datetime('now') WHERE id = ?",
-        [contract.id]
+      await run('contracts',
+        { status: 'active', updated_at: new Date().toISOString() },
+        { id: contract.id }
       );
     }
   }
@@ -169,9 +173,9 @@ async function triggerRelease(contract) {
 
     // Mark as failed to avoid infinite retry loops on unrecoverable errors
     if (err.message.includes('op_bad_auth') || err.message.includes('op_underfunded') || err.message.includes('tx_bad_secret')) {
-      run(
-        "UPDATE contracts SET status = 'failed', updated_at = datetime('now') WHERE id = ?",
-        [contract.id]
+      await run('contracts',
+        { status: 'failed', updated_at: new Date().toISOString() },
+        { id: contract.id }
       );
       logger.info('Marked contract as failed due to unrecoverable error', { contractId: contract.id });
     }

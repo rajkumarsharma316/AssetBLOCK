@@ -62,7 +62,7 @@ router.post('/challenge', (req, res) => {
  * 1. Freighter: verify signature of the challenge
  * 2. Direct: accept secret key (testnet only)
  */
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { publicKey, signedChallenge, secretKey } = req.body;
 
   if (!publicKey) {
@@ -113,30 +113,34 @@ router.post('/login', (req, res) => {
     return res.status(401).json({ error: 'Authentication failed' });
   }
 
-  // Ensure user exists
-  let user = findOne('SELECT * FROM users WHERE public_key = ?', [publicKey]);
-  if (!user) {
-    const userId = uuidv4();
-    insert('users', { id: userId, public_key: publicKey });
-    user = { id: userId, public_key: publicKey };
+  try {
+    // Ensure user exists
+    let user = await findOne('users', { public_key: publicKey });
+    if (!user) {
+      const userId = uuidv4();
+      user = await insert('users', { id: userId, public_key: publicKey });
+    }
+
+    // Issue JWT
+    const token = jwt.sign(
+      { userId: user.id, publicKey: user.public_key },
+      config.jwt.secret,
+      { expiresIn: config.jwt.expiresIn }
+    );
+
+    logger.info('User authenticated', { publicKey });
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        publicKey: user.public_key,
+      },
+    });
+  } catch (err) {
+    logger.error('Login DB error', { error: err.message });
+    res.status(500).json({ error: 'Login failed: ' + err.message });
   }
-
-  // Issue JWT
-  const token = jwt.sign(
-    { userId: user.id, publicKey: user.public_key },
-    config.jwt.secret,
-    { expiresIn: config.jwt.expiresIn }
-  );
-
-  logger.info('User authenticated', { publicKey });
-
-  res.json({
-    token,
-    user: {
-      id: user.id,
-      publicKey: user.public_key,
-    },
-  });
 });
 
 /**
@@ -168,8 +172,8 @@ router.get('/me', authMiddleware, async (req, res) => {
  * GET /api/auth/notifications
  * Get notifications for the current user.
  */
-router.get('/notifications', authMiddleware, (req, res) => {
-  const notifications = getNotifications(req.user.publicKey, req.query.all === 'true');
+router.get('/notifications', authMiddleware, async (req, res) => {
+  const notifications = await getNotifications(req.user.publicKey, req.query.all === 'true');
   res.json({ notifications });
 });
 
@@ -177,8 +181,8 @@ router.get('/notifications', authMiddleware, (req, res) => {
  * POST /api/auth/notifications/:id/read
  * Mark a notification as read.
  */
-router.post('/notifications/:id/read', authMiddleware, (req, res) => {
-  markRead(req.params.id);
+router.post('/notifications/:id/read', authMiddleware, async (req, res) => {
+  await markRead(req.params.id);
   res.json({ success: true });
 });
 
@@ -186,8 +190,8 @@ router.post('/notifications/:id/read', authMiddleware, (req, res) => {
  * POST /api/auth/notifications/read-all
  * Mark all notifications as read.
  */
-router.post('/notifications/read-all', authMiddleware, (req, res) => {
-  markAllRead(req.user.publicKey);
+router.post('/notifications/read-all', authMiddleware, async (req, res) => {
+  await markAllRead(req.user.publicKey);
   res.json({ success: true });
 });
 

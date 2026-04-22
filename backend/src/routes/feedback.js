@@ -11,7 +11,7 @@ const router = express.Router();
  * POST /api/feedback
  * Accepts feedback data and inserts it into the database
  */
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { name, email, walletAddress, rating, description } = req.body;
 
@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
       description: description.trim(),
     };
 
-    insert('feedback', feedbackEntry);
+    await insert('feedback', feedbackEntry);
 
     logger.info(`New feedback from ${name} (${email}) - Rating: ${rating}/5`);
 
@@ -56,13 +56,13 @@ router.post('/', (req, res) => {
  * GET /api/feedback
  * Returns all feedback entries (Admin only)
  */
-router.get('/', authMiddleware, (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     if (req.user.publicKey !== config.admin.wallet) {
       return res.status(403).json({ error: 'Forbidden. Admin access required.' });
     }
 
-    const data = findAll('SELECT * FROM feedback ORDER BY created_at DESC');
+    const data = await findAll('feedback', {}, { orderBy: 'created_at', ascending: false });
     res.json({ feedback: data, total: data.length });
   } catch (err) {
     logger.error('Error reading feedback:', { error: err.message });
@@ -74,13 +74,13 @@ router.get('/', authMiddleware, (req, res) => {
  * GET /api/feedback/export
  * Downloads all feedback as a CSV file (Admin only)
  */
-router.get('/export', authMiddleware, (req, res) => {
+router.get('/export', authMiddleware, async (req, res) => {
   try {
     if (req.user.publicKey !== config.admin.wallet) {
       return res.status(403).json({ error: 'Forbidden. Admin access required.' });
     }
 
-    const data = findAll('SELECT * FROM feedback ORDER BY created_at DESC');
+    const data = await findAll('feedback', {}, { orderBy: 'created_at', ascending: false });
     
     // Convert JSON to CSV
     if (data.length === 0) {

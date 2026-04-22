@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import config from './config.js';
-import { getDb } from './db/database.js';
 import authRoutes from './routes/auth.js';
 import contractRoutes from './routes/contracts.js';
 import transactionRoutes from './routes/transactions.js';
@@ -21,9 +20,6 @@ app.use(cors({
   credentials: true 
 }));
 app.use(express.json());
-
-// Initialize database
-getDb();
 
 // Routes
 app.use('/api/auth', authRoutes);

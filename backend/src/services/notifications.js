@@ -5,37 +5,46 @@ import { insert, findAll, run } from '../db/database.js';
  * Create a new notification for a user.
  */
 export async function createNotification(userPublicKey, contractId, message) {
-  insert('notifications', {
+  await insert('notifications', {
     id: uuidv4(),
     user_public_key: userPublicKey,
     contract_id: contractId,
     message,
-    read: 0,
+    read: false,
   });
 }
 
 /**
  * Get unread notifications for a user.
  */
-export function getNotifications(userPublicKey, includeRead = false) {
-  const sql = includeRead
-    ? 'SELECT * FROM notifications WHERE user_public_key = ? ORDER BY created_at DESC LIMIT 50'
-    : 'SELECT * FROM notifications WHERE user_public_key = ? AND read = 0 ORDER BY created_at DESC LIMIT 50';
-  return findAll(sql, [userPublicKey]);
+export async function getNotifications(userPublicKey, includeRead = false) {
+  if (includeRead) {
+    return await findAll('notifications', { user_public_key: userPublicKey }, {
+      orderBy: 'created_at',
+      ascending: false,
+      limit: 50,
+    });
+  }
+
+  return await findAll('notifications', { user_public_key: userPublicKey, read: false }, {
+    orderBy: 'created_at',
+    ascending: false,
+    limit: 50,
+  });
 }
 
 /**
  * Mark a notification as read.
  */
-export function markRead(notificationId) {
-  run('UPDATE notifications SET read = 1 WHERE id = ?', [notificationId]);
+export async function markRead(notificationId) {
+  await run('notifications', { read: true }, { id: notificationId });
 }
 
 /**
  * Mark all notifications as read for a user.
  */
-export function markAllRead(userPublicKey) {
-  run('UPDATE notifications SET read = 1 WHERE user_public_key = ?', [userPublicKey]);
+export async function markAllRead(userPublicKey) {
+  await run('notifications', { read: true }, { user_public_key: userPublicKey });
 }
 
 export default { createNotification, getNotifications, markRead, markAllRead };

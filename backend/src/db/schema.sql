@@ -1,8 +1,13 @@
+-- ============================================================
+-- AssetBLOCK PostgreSQL Schema for Supabase
+-- Run this in the Supabase SQL Editor to create all tables.
+-- ============================================================
+
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
   public_key TEXT UNIQUE NOT NULL,
-  created_at TEXT DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Payment contracts
@@ -19,9 +24,9 @@ CREATE TABLE IF NOT EXISTS contracts (
   destination TEXT NOT NULL,
   dest_asset_code TEXT,
   dest_asset_issuer TEXT,
-  status TEXT DEFAULT 'pending' CHECK(status IN ('pending','funded','active','completed','expired','cancelled')),
-  created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now')),
+  status TEXT DEFAULT 'pending' CHECK(status IN ('pending','funded','active','completed','expired','cancelled','failed')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
   FOREIGN KEY (creator_public_key) REFERENCES users(public_key)
 );
 
@@ -33,8 +38,8 @@ CREATE TABLE IF NOT EXISTS conditions (
   logic_operator TEXT DEFAULT 'AND' CHECK(logic_operator IN ('AND','OR')),
   logic_group INTEGER DEFAULT 0,
   params TEXT NOT NULL,
-  is_met INTEGER DEFAULT 0,
-  met_at TEXT,
+  is_met BOOLEAN DEFAULT FALSE,
+  met_at TIMESTAMPTZ,
   FOREIGN KEY (contract_id) REFERENCES contracts(id) ON DELETE CASCADE
 );
 
@@ -44,8 +49,8 @@ CREATE TABLE IF NOT EXISTS signers (
   contract_id TEXT NOT NULL,
   public_key TEXT NOT NULL,
   weight INTEGER DEFAULT 1,
-  has_signed INTEGER DEFAULT 0,
-  signed_at TEXT,
+  has_signed BOOLEAN DEFAULT FALSE,
+  signed_at TIMESTAMPTZ,
   FOREIGN KEY (contract_id) REFERENCES contracts(id) ON DELETE CASCADE
 );
 
@@ -58,7 +63,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   status TEXT DEFAULT 'pending' CHECK(status IN ('pending','submitted','confirmed','failed')),
   amount TEXT,
   details TEXT,
-  created_at TEXT DEFAULT (datetime('now')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
   FOREIGN KEY (contract_id) REFERENCES contracts(id) ON DELETE CASCADE
 );
 
@@ -68,9 +73,20 @@ CREATE TABLE IF NOT EXISTS notifications (
   user_public_key TEXT NOT NULL,
   contract_id TEXT,
   message TEXT NOT NULL,
-  read INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT (datetime('now')),
+  read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
   FOREIGN KEY (user_public_key) REFERENCES users(public_key)
+);
+
+-- Feedback
+CREATE TABLE IF NOT EXISTS feedback (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  wallet_address TEXT NOT NULL,
+  rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+  description TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Indexes
@@ -81,13 +97,23 @@ CREATE INDEX IF NOT EXISTS idx_signers_contract ON signers(contract_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_contract ON transactions(contract_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_public_key);
 
--- Feedback
-CREATE TABLE IF NOT EXISTS feedback (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  wallet_address TEXT NOT NULL,
-  rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
-  description TEXT NOT NULL,
-  created_at TEXT DEFAULT (datetime('now'))
-);
+-- ============================================================
+-- Disable RLS for all tables (backend uses service_role key)
+-- ============================================================
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contracts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conditions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE signers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
+
+-- Create policies that allow the service_role full access
+-- (service_role bypasses RLS by default, but these are here for clarity)
+CREATE POLICY "Service role full access" ON users FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON contracts FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON conditions FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON signers FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON transactions FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON notifications FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON feedback FOR ALL USING (true) WITH CHECK (true);

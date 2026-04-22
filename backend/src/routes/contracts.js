@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { findOne, findAll, run, insert } from '../db/database.js';
+import { findOne, findAll, run, insert, rpc } from '../db/database.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { createEscrow, buildFundTransaction, markFunded, releaseEscrow, refundEscrow } from '../services/escrow.js';
 import { createNotification } from '../services/notifications.js';
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
     const contractId = uuidv4();
 
     // Create the contract record
-    insert('contracts', {
+    await insert('contracts', {
       id: contractId,
       creator_public_key: req.user.publicKey,
       title,
@@ -56,14 +56,14 @@ router.post('/', async (req, res) => {
 
     // Add conditions
     for (const cond of conditions) {
-      insert('conditions', {
+      await insert('conditions', {
         id: uuidv4(),
         contract_id: contractId,
         type: cond.type,
         logic_operator: cond.logicOperator || 'AND',
         logic_group: cond.logicGroup || 0,
         params: JSON.stringify(cond.params),
-        is_met: 0,
+        is_met: false,
       });
     }
 
@@ -72,12 +72,12 @@ router.post('/', async (req, res) => {
     const allSignerKeys = [...new Set([req.user.publicKey, ...submittedSigners])];
 
     for (const signerKey of allSignerKeys) {
-      insert('signers', {
+      await insert('signers', {
         id: uuidv4(),
         contract_id: contractId,
         public_key: signerKey,
         weight: 1,
-        has_signed: 0,
+        has_signed: false,
       });
     }
 
@@ -89,9 +89,9 @@ router.post('/', async (req, res) => {
       threshold
     );
 
-    const contract = findOne('SELECT * FROM contracts WHERE id = ?', [contractId]);
-    const contractConditions = findAll('SELECT * FROM conditions WHERE contract_id = ?', [contractId]);
-    const contractSigners = findAll('SELECT * FROM signers WHERE contract_id = ?', [contractId]);
+    const contract = await findOne('contracts', { id: contractId });
+    const contractConditions = await findAll('conditions', { contract_id: contractId });
+    const contractSigners = await findAll('signers', { contract_id: contractId });
 
     logger.info('Contract created', { contractId, title });
 
@@ -113,55 +113,57 @@ router.post('/', async (req, res) => {
  * GET /api/contracts
  * List all contracts for the authenticated user.
  */
-router.get('/', (req, res) => {
-  const { status, page = 1, limit = 20 } = req.query;
-  const offset = (parseInt(page) - 1) * parseInt(limit);
+router.get('/', async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
 
-  let sql = `
-    SELECT DISTINCT c.* FROM contracts c
-    LEFT JOIN signers s ON s.contract_id = c.id
-    WHERE (c.creator_public_key = ? OR s.public_key = ? OR c.destination = ?)
-  `;
-  const params = [req.user.publicKey, req.user.publicKey, req.user.publicKey];
+    // Use RPC function for the complex JOIN query
+    const contracts = await rpc('get_user_contracts', {
+      user_key: req.user.publicKey,
+      status_filter: status || null,
+      lim: parseInt(limit),
+      off: offset,
+    });
 
-  if (status) {
-    sql += ' AND c.status = ?';
-    params.push(status);
+    // Attach conditions and signers to each contract
+    const result = [];
+    for (const contract of contracts) {
+      const conditions = await findAll('conditions', { contract_id: contract.id });
+      const contractSigners = await findAll('signers', { contract_id: contract.id });
+      result.push({ ...contract, conditions, signers: contractSigners });
+    }
+
+    res.json({ contracts: result });
+  } catch (err) {
+    logger.error('Failed to list contracts', { error: err.message });
+    res.status(500).json({ error: 'Failed to list contracts: ' + err.message });
   }
-
-  sql += ` ORDER BY c.created_at DESC LIMIT ? OFFSET ?`;
-  params.push(parseInt(limit), offset);
-
-  const contracts = findAll(sql, params);
-
-  // Attach conditions and signers to each contract
-  const result = contracts.map(contract => {
-    const conditions = findAll('SELECT * FROM conditions WHERE contract_id = ?', [contract.id]);
-    const signers = findAll('SELECT * FROM signers WHERE contract_id = ?', [contract.id]);
-    return { ...contract, conditions, signers };
-  });
-
-  res.json({ contracts: result });
 });
 
 /**
  * GET /api/contracts/:id
  * Get detailed info for a specific contract.
  */
-router.get('/:id', (req, res) => {
-  const contract = findOne('SELECT * FROM contracts WHERE id = ?', [req.params.id]);
-  if (!contract) return res.status(404).json({ error: 'Contract not found' });
+router.get('/:id', async (req, res) => {
+  try {
+    const contract = await findOne('contracts', { id: req.params.id });
+    if (!contract) return res.status(404).json({ error: 'Contract not found' });
 
-  const conditions = findAll('SELECT * FROM conditions WHERE contract_id = ?', [contract.id]);
-  const signers = findAll('SELECT * FROM signers WHERE contract_id = ?', [contract.id]);
-  const transactions = findAll(
-    'SELECT * FROM transactions WHERE contract_id = ? ORDER BY created_at DESC',
-    [contract.id]
-  );
+    const conditions = await findAll('conditions', { contract_id: contract.id });
+    const contractSigners = await findAll('signers', { contract_id: contract.id });
+    const transactions = await findAll('transactions', { contract_id: contract.id }, {
+      orderBy: 'created_at',
+      ascending: false,
+    });
 
-  res.json({
-    contract: { ...contract, conditions, signers, transactions },
-  });
+    res.json({
+      contract: { ...contract, conditions, signers: contractSigners, transactions },
+    });
+  } catch (err) {
+    logger.error('Failed to get contract', { error: err.message });
+    res.status(500).json({ error: 'Failed to get contract: ' + err.message });
+  }
 });
 
 /**
@@ -175,7 +177,7 @@ router.post('/:id/fund', async (req, res) => {
 
     if (txHash) {
       // Client already submitted the transaction — mark as funded
-      markFunded(req.params.id, txHash);
+      await markFunded(req.params.id, txHash);
       return res.json({ success: true, message: 'Contract funded' });
     }
 
@@ -194,34 +196,38 @@ router.post('/:id/fund', async (req, res) => {
  */
 router.post('/:id/approve', async (req, res) => {
   try {
-    const contract = findOne('SELECT * FROM contracts WHERE id = ?', [req.params.id]);
+    const contract = await findOne('contracts', { id: req.params.id });
     if (!contract) return res.status(404).json({ error: 'Contract not found' });
 
     // Mark signer as having signed
-    run(
-      "UPDATE signers SET has_signed = 1, signed_at = datetime('now') WHERE contract_id = ? AND public_key = ?",
-      [req.params.id, req.user.publicKey]
+    await run('signers', 
+      { has_signed: true, signed_at: new Date().toISOString() },
+      { contract_id: req.params.id, public_key: req.user.publicKey }
     );
 
     // Update approval conditions
-    const approvalConditions = findAll(
-      "SELECT * FROM conditions WHERE contract_id = ? AND type = 'approval'",
-      [req.params.id]
-    );
+    const approvalConditions = await findAll('conditions', {
+      contract_id: req.params.id,
+      type: 'approval',
+    });
 
     for (const cond of approvalConditions) {
       const params = JSON.parse(cond.params);
-      const totalApproved = findAll(
-        'SELECT * FROM signers WHERE contract_id = ? AND has_signed = 1',
-        [req.params.id]
-      ).length;
+      const allSigners = await findAll('signers', { contract_id: req.params.id, has_signed: true });
+      const totalApproved = allSigners.length;
 
       params.currentApprovals = totalApproved;
 
-      run('UPDATE conditions SET params = ? WHERE id = ?', [JSON.stringify(params), cond.id]);
+      await run('conditions',
+        { params: JSON.stringify(params) },
+        { id: cond.id }
+      );
 
       if (totalApproved >= (params.requiredApprovals || 1)) {
-        run("UPDATE conditions SET is_met = 1, met_at = datetime('now') WHERE id = ?", [cond.id]);
+        await run('conditions',
+          { is_met: true, met_at: new Date().toISOString() },
+          { id: cond.id }
+        );
       }
     }
 
@@ -249,7 +255,7 @@ router.post('/:id/approve', async (req, res) => {
  */
 router.post('/:id/cancel', async (req, res) => {
   try {
-    const contract = findOne('SELECT * FROM contracts WHERE id = ?', [req.params.id]);
+    const contract = await findOne('contracts', { id: req.params.id });
     if (!contract) return res.status(404).json({ error: 'Contract not found' });
     if (contract.creator_public_key !== req.user.publicKey) {
       return res.status(403).json({ error: 'Only the creator can cancel' });
@@ -265,9 +271,9 @@ router.post('/:id/cancel', async (req, res) => {
     }
 
     // Just mark as cancelled if not yet funded
-    run(
-      "UPDATE contracts SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?",
-      [req.params.id]
+    await run('contracts',
+      { status: 'cancelled', updated_at: new Date().toISOString() },
+      { id: req.params.id }
     );
 
     res.json({ success: true, message: 'Contract cancelled' });
@@ -281,36 +287,41 @@ router.post('/:id/cancel', async (req, res) => {
  * GET /api/contracts/:id/status
  * Get real-time condition status for a contract.
  */
-router.get('/:id/status', (req, res) => {
-  const contract = findOne('SELECT * FROM contracts WHERE id = ?', [req.params.id]);
-  if (!contract) return res.status(404).json({ error: 'Contract not found' });
+router.get('/:id/status', async (req, res) => {
+  try {
+    const contract = await findOne('contracts', { id: req.params.id });
+    if (!contract) return res.status(404).json({ error: 'Contract not found' });
 
-  const conditions = findAll('SELECT * FROM conditions WHERE contract_id = ?', [contract.id]);
-  const signers = findAll('SELECT * FROM signers WHERE contract_id = ?', [contract.id]);
+    const conditions = await findAll('conditions', { contract_id: contract.id });
+    const contractSigners = await findAll('signers', { contract_id: contract.id });
 
-  const conditionStatus = conditions.map(c => ({
-    id: c.id,
-    type: c.type,
-    logicOperator: c.logic_operator,
-    isMet: !!c.is_met,
-    metAt: c.met_at,
-    params: JSON.parse(c.params),
-  }));
+    const conditionStatus = conditions.map(c => ({
+      id: c.id,
+      type: c.type,
+      logicOperator: c.logic_operator,
+      isMet: !!c.is_met,
+      metAt: c.met_at,
+      params: JSON.parse(c.params),
+    }));
 
-  const signerStatus = signers.map(s => ({
-    publicKey: s.public_key,
-    hasSigned: !!s.has_signed,
-    signedAt: s.signed_at,
-  }));
+    const signerStatus = contractSigners.map(s => ({
+      publicKey: s.public_key,
+      hasSigned: !!s.has_signed,
+      signedAt: s.signed_at,
+    }));
 
-  const allConditionsMet = conditions.every(c => c.is_met);
+    const allConditionsMet = conditions.every(c => c.is_met);
 
-  res.json({
-    contractStatus: contract.status,
-    conditions: conditionStatus,
-    signers: signerStatus,
-    allConditionsMet,
-  });
+    res.json({
+      contractStatus: contract.status,
+      conditions: conditionStatus,
+      signers: signerStatus,
+      allConditionsMet,
+    });
+  } catch (err) {
+    logger.error('Status check error', { error: err.message });
+    res.status(500).json({ error: err.message });
+  }
 });
 
 /**
