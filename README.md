@@ -60,9 +60,10 @@ Based on the collected user feedback, the following improvements were planned an
 
 ### Desktop Experience
 <!-- PLACEHOLDER: Insert desktop screenshots here -->
+
 <p align="center">
   <img src="https://via.placeholder.com/800x450.png?text=Desktop+Dashboard+Screenshot" alt="Desktop Dashboard" width="48%" />
-  <img src="https://via.placeholder.com/800x450.png?text=Desktop+Contract+Details+Screenshot" alt="Desktop Contract Details" width="48%" />
+  <img width="1910" height="905" alt="image" src="https://github.com/user-attachments/assets/92c5dc2f-b895-4fd1-a148-f331a5cd5503" />
 </p>
 
 ### Mobile Experience
