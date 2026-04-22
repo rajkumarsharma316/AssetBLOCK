@@ -69,7 +69,7 @@ Based on the collected user feedback, the following improvements were planned an
 ### Mobile Experience
 <!-- PLACEHOLDER: Insert mobile screenshots here -->
 <p align="center">
-  <img width="30%" height="801" alt="image" src="https://github.com/user-attachments/assets/3c3bf418-947b-42bf-95fa-4dfad43b8894" /> <img width="30%" height="801" alt="image" src="https://github.com/user-attachments/assets/74cd9461-c3fa-47ef-9c76-ad0769fe5299" /> <img width="30%" height="801" alt="image" src="https://github.com/user-attachments/assets/96fa56a6-ab46-46ac-8bc9-757d33c3230e" />
+  <img width="30%" alt="image" src="https://github.com/user-attachments/assets/3c3bf418-947b-42bf-95fa-4dfad43b8894" /> <img width="30%" alt="image" src="https://github.com/user-attachments/assets/74cd9461-c3fa-47ef-9c76-ad0769fe5299" /> <img width="30%" alt="image" src="https://github.com/user-attachments/assets/96fa56a6-ab46-46ac-8bc9-757d33c3230e" />
 </p>
 
 ---
