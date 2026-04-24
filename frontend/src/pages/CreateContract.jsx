@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { contractsApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
@@ -43,7 +43,23 @@ export default function CreateContract() {
     threshold: 2,
   });
 
+  const [xlmPrice, setXlmPrice] = useState(0.12); // Fallback price
   const [newSigner, setNewSigner] = useState('');
+
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=stellar&vs_currencies=usd');
+        const data = await res.json();
+        if (data.stellar?.usd) {
+          setXlmPrice(data.stellar.usd);
+        }
+      } catch (err) {
+        console.error('Failed to fetch XLM price:', err);
+      }
+    };
+    fetchPrice();
+  }, []);
 
   const updateForm = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -185,29 +201,57 @@ export default function CreateContract() {
               />
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">Amount *</label>
+            <div className="form-group prominent-amount">
+              <label className="form-label">Escrow Amount *</label>
+              <div style={{ position: 'relative' }}>
                 <input
                   type="number"
-                  className="form-input"
-                  placeholder="100"
+                  className="form-input amount-input"
+                  placeholder="0.00"
                   min="0.0000001"
                   step="any"
                   value={form.amount}
                   onChange={(e) => updateForm('amount', e.target.value)}
+                  style={{
+                    fontSize: '1.8rem',
+                    fontWeight: 800,
+                    padding: '20px 80px 20px 20px',
+                    width: '100%',
+                    height: 'auto',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '2px solid var(--border-primary)'
+                  }}
                 />
+                <div style={{
+                  position: 'absolute',
+                  right: '20px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontWeight: 800,
+                  fontSize: '1.2rem',
+                  color: 'var(--accent-cyan)',
+                  pointerEvents: 'none'
+                }}>
+                  XLM
+                </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">Asset</label>
-                <select
-                  className="form-select"
-                  value={form.assetCode}
-                  onChange={(e) => updateForm('assetCode', e.target.value)}
-                >
-                  <option value="XLM">XLM (Lumens)</option>
-                </select>
-              </div>
+              {form.amount && parseFloat(form.amount) > 0 && (
+                <div style={{
+                  marginTop: '12px',
+                  padding: '10px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'rgba(57, 255, 20, 0.06)',
+                  border: '1px solid rgba(57, 255, 20, 0.15)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Estimated Value:</span>
+                  <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--status-success)' }}>
+                    ${(parseFloat(form.amount) * xlmPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="form-group">
