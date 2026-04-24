@@ -106,20 +106,26 @@ export default function ConditionBuilder({ conditions, onChange }) {
               {/* Type-specific params */}
               {cond.type === 'time' && (
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Release After (Date & Time)</label>
+                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    Release After (Date & Time)
+                    <span title="The funds will remain locked in escrow until this specific date and time is reached."><Clock size={14} style={{ color: 'var(--text-tertiary)' }} /></span>
+                  </label>
                   <input
                     type="datetime-local"
                     className="form-input"
                     value={cond.params.releaseAfter || ''}
                     onChange={(e) => handleParamChange(idx, 'releaseAfter', e.target.value)}
                   />
-                  <span className="form-hint">Funds will be released after this time</span>
+                  <span className="form-hint">The smart contract automatically unlocks the payment once this time passes.</span>
                 </div>
               )}
 
               {cond.type === 'approval' && (
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Required Approvals</label>
+                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    Required Approvals
+                    <span title="Number of designated signers that must approve the transaction before funds are released."><UserCheck size={14} style={{ color: 'var(--text-tertiary)' }} /></span>
+                  </label>
                   <input
                     type="number"
                     className="form-input"
@@ -128,31 +134,48 @@ export default function ConditionBuilder({ conditions, onChange }) {
                     value={cond.params.requiredApprovals || 1}
                     onChange={(e) => handleParamChange(idx, 'requiredApprovals', parseInt(e.target.value))}
                   />
-                  <span className="form-hint">Number of signer approvals needed</span>
+                  <span className="form-hint">At least {cond.params.requiredApprovals || 1} of the designated signers must sign the release transaction.</span>
                 </div>
               )}
 
               {cond.type === 'oracle' && (
-                <div className="form-row">
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Target Value</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="e.g., 100"
-                      value={cond.params.targetValue || ''}
-                      onChange={(e) => handleParamChange(idx, 'targetValue', e.target.value)}
-                    />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div className="form-row">
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="form-label">Target Value</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="e.g., 100"
+                        value={cond.params.targetValue || ''}
+                        onChange={(e) => handleParamChange(idx, 'targetValue', e.target.value)}
+                      />
+                      <span className="form-hint">The goal value to reach</span>
+                    </div>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="form-label">Data Endpoint</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="https://api.example.com/price"
+                        value={cond.params.endpoint || ''}
+                        onChange={(e) => handleParamChange(idx, 'endpoint', e.target.value)}
+                      />
+                      <span className="form-hint">URL to fetch external data</span>
+                    </div>
                   </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Data Endpoint</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="https://api.example.com/price"
-                      value={cond.params.endpoint || ''}
-                      onChange={(e) => handleParamChange(idx, 'endpoint', e.target.value)}
-                    />
+                  <div style={{ 
+                    padding: '10px 14px', 
+                    background: 'rgba(174, 0, 251, 0.05)', 
+                    border: '1px solid rgba(174, 0, 251, 0.15)', 
+                    borderRadius: 'var(--radius-md)',
+                    fontSize: '0.8rem',
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.4
+                  }}>
+                    <strong style={{ color: 'var(--accent-purple)', display: 'block', marginBottom: 4 }}>How Oracle Conditions Work:</strong>
+                    The AssetBlock monitor will fetch data from your endpoint. If the value returned matches or exceeds your target, the condition is met. 
+                    <em> Example: Fetching the price of XLM from an exchange API.</em>
                   </div>
                 </div>
               )}

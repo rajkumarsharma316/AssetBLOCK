@@ -263,7 +263,10 @@ export default function CreateContract() {
                 value={form.destination}
                 onChange={(e) => updateForm('destination', e.target.value)}
               />
-              <span className="form-hint">Stellar public key of the payment recipient</span>
+              <span className="form-hint" style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                <Info size={14} />
+                Recipient's Stellar public key. This is where funds will be sent after conditions are met.
+              </span>
             </div>
           </div>
         )}
@@ -353,7 +356,10 @@ export default function CreateContract() {
 
             {form.signers.length > 0 && (
               <div className="form-group">
-                <label className="form-label">Approval Threshold</label>
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  Approval Threshold
+                  <span title="The minimum number of signatures required from the pool of signers to authorize a release."><Users size={14} style={{ color: 'var(--text-tertiary)' }} /></span>
+                </label>
                 <input
                   type="number"
                   className="form-input"
@@ -363,7 +369,8 @@ export default function CreateContract() {
                   onChange={(e) => updateForm('threshold', parseInt(e.target.value))}
                 />
                 <span className="form-hint">
-                  Number of signatures required to release funds (out of {form.signers.length + 1} total signers)
+                  <strong>{form.threshold} out of {form.signers.length + 1}</strong> signatures will be required. 
+                  Increasing this adds more security but requires more coordination.
                 </span>
               </div>
             )}
