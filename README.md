@@ -1,5 +1,10 @@
 
 
+
+
+
+
+
 # AssetBlock ⚡
 
 > Programmable conditional payments and smart escrows on the Stellar Network.
@@ -12,9 +17,8 @@ AssetBlock is a decentralized application (dApp) that enables users to create, m
 https://asset-block.vercel.app/
 
 ## 🎥 Video
-<!-- PLACEHOLDER: Insert a link to a demo video showing full MVP functionality -->
-> **[Video Link Placeholder - e.g. Screen.Recording.2026-04-23.mp4]**
-> `![AssetBlock Demo Video](./docs/demo-video.gif)`
+
+https://github.com/user-attachments/assets/3fa744c5-9ad0-4ec8-9ce2-b409dd064293
 
 ---
 
