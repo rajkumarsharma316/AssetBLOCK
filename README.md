@@ -16,29 +16,47 @@ https://asset-block.vercel.app/
 
 ---
 
-## 🏆 Level 5 Validation: User Feedback & Iteration
 
 This project has been validated with real testnet users as part of the Level 5 requirements.
 
 ### 👥 User Validation (5+ Real Testnet Users)
 The following users have successfully tested and interacted with the AssetBlock MVP on the Stellar Testnet:
-1. `[Wallet Address 1 - verifiable on Stellar Explorer]`
-2. `[Wallet Address 2 - verifiable on Stellar Explorer]`
-3. `[Wallet Address 3 - verifiable on Stellar Explorer]`
-4. `[Wallet Address 4 - verifiable on Stellar Explorer]`
-5. `[Wallet Address 5 - verifiable on Stellar Explorer]`
+1. `GDTWHQ2P5TAMNCAHLHVNRVHVQLEECRF6AGP2PVU5QHWSKK6BMEVMURCR` (Madhav Seth)
+2. `GBAUV4WBMA4GZPNTI77O2E2GIV43JNPWOQAQEPOIITZ4BY4JHWRDANFF` (Mayank Dixit)
+3. `GBLZNJQ6IE642PDK6DLZOC6LLBVZ7XAWC2JRGVN76DZBNFD5PIUEIRDW` (Harsh Kaushik)
+4. `GATVVSGVMVMWYBHV7MWJTMABOTEWBE4SENJLPDUYXCCPFRDFBUXYFJ2O` (Md Athar Sharif)
+5. `GBJKZ6S7XFDNQ4J6PEDWBJI3HMC7EDNM4XBZBX3AEADD7HY2UYAU4GAF` (Mayank Dewangan)
+6. `GBZU54GWNKN6HSIA3W6MUKF7GWJFMZBT6YBRDLQ3NZXKGN4IK5ER3O5Y` (Nandita)
 
 ### 📊 Feedback Documentation
 User feedback was collected via a Google Form, asking users to rate the product and provide suggestions.
-- **[Google Form Feedback Link Placeholder]**
-- **[Excel Sheet Responses Link Placeholder]**
+
+| Name | Wallet Address | Rating | Feedback / Suggestion |
+| :--- | :--- | :---: | :--- |
+| **Madhav Seth** | `GDTWHQ...URCR` | 3/5 | Small numbers in the amount fields lead to mistakes; requested better visual validation. |
+| **Mayank Dixit** | `GBAUV4...ANFF` | 4/5 | Confused about contract unlock times; requested a localized countdown and timezone indicator. |
+| **Harsh Kaushik** | `GBLZNJ...IRDW` | 5/5 | Raised concerns about global time adaptation and timezone consistency across different regions. |
+| **Md Athar Sharif** | `GATVVS...FJ2O` | 5/5 | Found complex fields like "Oracle Data" confusing and asked for inline guidance. |
+| **Nandita** | `GBZU54...3O5Y` | 4/5 | Reported a bug where the back button was not working during the contract creation flow. |
+| **Mayank Dewangan** | `GBJKZ6...4GAF` | 5/5 | General positive feedback and usability testing. |
 
 ### 🔄 Iteration & Improvements
 Based on the collected user feedback, the following improvements were planned and implemented:
-- **Improvement 1**: `[Describe the improvement here based on feedback]`
-  - **Git Commit**: `[Link to the GitHub commit for this improvement]`
-- **Improvement 2**: `[Describe another improvement if applicable]`
-  - **Git Commit**: `[Link to the GitHub commit for this improvement]`
+
+- **Global Time Adaption**: Addressed Harsh Kaushik's feedback by implementing automatic conversion of local time selections to UTC (`toISOString()`), ensuring global consistency and accurate time-based contract execution across all timezones.
+  - **Git Commit**: [`5e3c97c390bc99f17aa371c74bdc2258fab80c48`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/5e3c97c390bc99f17aa371c74bdc2258fab80c48)
+
+- **Visual Amount Validation**: Based on Madhav Seth's feedback, we redesigned the amount fields to be more prominent and integrated an automatic, real-time USD value conversion to help users easily double-check amounts before finalizing contracts.
+  - **Git Commit**: [`6929c2260de5d91fe11585ad5ec64401d40d0bca`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/6929c2260de5d91fe11585ad5ec64401d40d0bca)
+
+- **Contextual Tooltips & Form Helpers**: To resolve Md Athar Sharif's confusion with advanced features, we added contextual tooltips and inline explanations (especially for "Oracle Data") to guide users smoothly through the multi-step creation form.
+  - **Git Commit**: [`f3ed0c87d0c0b789412f3191cd40c6b945424339`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/f3ed0c87d0c0b789412f3191cd40c6b945424339)
+
+- **Localized Countdown & Timezone Indicator**: Responding to Mayank Dixit's request, we implemented a localized countdown timer on the contract dashboard that automatically detects and displays the user's local timezone.
+  - **Git Commit**: [`fc12ebbbb1f43c4f0042264aa83fbe2202d8776d`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/fc12ebbbb1f43c4f0042264aa83fbe2202d8776d)
+
+- **Navigation Fixes**: Nandita reported an issue with the form navigation. We fixed the state management bug that prevented the back button from working properly in the wizard.
+  - **Git Commit**: [`a2866a778a5a0e3d48fc71dc9080c65c5bfb9c23`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/a2866a778a5a0e3d48fc71dc9080c65c5bfb9c23)
 
 ---
 
