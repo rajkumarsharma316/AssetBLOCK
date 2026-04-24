@@ -23,6 +23,7 @@ import {
   Settings,
   Copy,
 } from 'lucide-react';
+import CountdownTimer from '../components/CountdownTimer';
 
 export default function ContractDetail() {
   const { id } = useParams();
@@ -311,7 +312,10 @@ export default function ContractDetail() {
                         </div>
                         <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)', marginTop: 2 }}>
                           {cond.type === 'time' && params.releaseAfter && (
-                            <>Release after: {formatDate(params.releaseAfter)} ({formatTimeRemaining(params.releaseAfter)})</>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+                              <span>Release after: {formatDate(params.releaseAfter)}</span>
+                              <CountdownTimer targetDate={params.releaseAfter} />
+                            </div>
                           )}
                           {cond.type === 'approval' && (
                             <>Approvals: {params.currentApprovals || 0}/{params.requiredApprovals || 1}</>

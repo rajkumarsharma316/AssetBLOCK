@@ -3,6 +3,8 @@ import StatusBadge from './StatusBadge';
 import { truncateAddress, formatAmount, formatTimeRemaining, formatDate } from '../utils/formatters';
 import { Clock, Users, ArrowRight } from 'lucide-react';
 
+import CountdownTimer from './CountdownTimer';
+
 export default function ContractCard({ contract }) {
   const conditions = contract.conditions || [];
   const metCount = conditions.filter((c) => c.is_met).length;
@@ -39,7 +41,7 @@ export default function ContractCard({ contract }) {
         </div>
 
         {/* Info row */}
-        <div style={{ display: 'flex', gap: 16, marginBottom: 16, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+        <div style={{ display: 'flex', gap: 16, marginBottom: 16, fontSize: '0.8rem', color: 'var(--text-secondary)', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <ArrowRight size={14} />
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.76rem' }}>
@@ -47,10 +49,7 @@ export default function ContractCard({ contract }) {
             </span>
           </div>
           {deadline && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <Clock size={14} />
-              {formatTimeRemaining(deadline)}
-            </div>
+            <CountdownTimer targetDate={deadline} />
           )}
           {contract.signers && contract.signers.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
