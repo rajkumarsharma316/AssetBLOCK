@@ -463,7 +463,7 @@ export default function CreateContract() {
           <button
             type="button"
             className="btn btn-secondary"
-            onClick={() => setStep(step - 1)}
+            onClick={() => { setStep((prev) => prev - 1); setError(''); }}
             disabled={step === 0}
           >
             <ArrowLeft size={16} />
