@@ -53,10 +53,13 @@ export default function Dashboard() {
 
   return (
     <div className="page-content animate-fade-in">
-      <div className="page-header page-header-row">
+      <div className="page-header page-header-row" style={{ alignItems: 'flex-start' }}>
         <div>
           <h1>Dashboard</h1>
-          <p>Overview of your conditional payment contracts</p>
+          <p style={{ marginBottom: '8px' }}>Overview of your conditional payment contracts</p>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '600px', lineHeight: '1.5' }}>
+            Welcome to AssetBlock. Create and manage secure, time-based escrow smart contracts on the Stellar network. Set programmable payment conditions that automatically execute and release funds without requiring a middleman.
+          </p>
         </div>
         <Link to="/create" className="btn btn-primary">
           <Plus size={18} />
