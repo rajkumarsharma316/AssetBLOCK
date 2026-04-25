@@ -21,42 +21,29 @@ This project has been validated with real testnet users as part of the Level 5 r
 
 ### 👥 User Validation (5+ Real Testnet Users)
 The following users have successfully tested and interacted with the AssetBlock MVP on the Stellar Testnet:
-1. `GDTWHQ2P5TAMNCAHLHVNRVHVQLEECRF6AGP2PVU5QHWSKK6BMEVMURCR` (Madhav Seth)
-2. `GBAUV4WBMA4GZPNTI77O2E2GIV43JNPWOQAQEPOIITZ4BY4JHWRDANFF` (Mayank Dixit)
-3. `GBLZNJQ6IE642PDK6DLZOC6LLBVZ7XAWC2JRGVN76DZBNFD5PIUEIRDW` (Harsh Kaushik)
-4. `GATVVSGVMVMWYBHV7MWJTMABOTEWBE4SENJLPDUYXCCPFRDFBUXYFJ2O` (Md Athar Sharif)
-5. `GBJKZ6S7XFDNQ4J6PEDWBJI3HMC7EDNM4XBZBX3AEADD7HY2UYAU4GAF` (Mayank Dewangan)
-6. `GBZU54GWNKN6HSIA3W6MUKF7GWJFMZBT6YBRDLQ3NZXKGN4IK5ER3O5Y` (Nandita)
 
-### 📊 Feedback Documentation
-User feedback was collected via a Google Form, asking users to rate the product and provide suggestions.
+#### Table 1: Name to Wallet Address Mapping
 
-| Name | Wallet Address | Rating | Feedback / Suggestion |
-| :--- | :--- | :---: | :--- |
-| **Madhav Seth** | `GDTWHQ...URCR` | 3/5 | Small numbers in the amount fields lead to mistakes; requested better visual validation. |
-| **Mayank Dixit** | `GBAUV4...ANFF` | 4/5 | Confused about contract unlock times; requested a localized countdown and timezone indicator. |
-| **Harsh Kaushik** | `GBLZNJ...IRDW` | 5/5 | Raised concerns about global time adaptation and timezone consistency across different regions. |
-| **Md Athar Sharif** | `GATVVS...FJ2O` | 5/5 | Found complex fields like "Oracle Data" confusing and asked for inline guidance. |
-| **Nandita** | `GBZU54...3O5Y` | 4/5 | Reported a bug where the back button was not working during the contract creation flow. |
-| **Mayank Dewangan** | `GBJKZ6...4GAF` | 5/5 | General positive feedback and usability testing. |
+| User Name | User Email | User Wallet Address |
+| :--- | :--- | :--- |
+| Madhav Seth | madhav24100@iiitnr.edu.in | `GDTWHQ2P5TAMNCAHLHVNRVHVQLEECRF6AGP2PVU5QHWSKK6BMEVMURCR` |
+| Mayank Dixit | mayank24100@iiitnr.edu.in | `GBAUV4WBMA4GZPNTI77O2E2GIV43JNPWOQAQEPOIITZ4BY4JHWRDANFF` |
+| Harsh Kaushik | harsh.kaushik10b@gmail.com | `GBLZNJQ6IE642PDK6DLZOC6LLBVZ7XAWC2JRGVN76DZBNFD5PIUEIRDW` |
+| Md Athar Sharif | md24100@iiitnr.edu.in | `GATVVSGVMVMWYBHV7MWJTMABOTEWBE4SENJLPDUYXCCPFRDFBUXYFJ2O` |
+| Nandita | nanditasahu141004@gmail.com | `GBZU54GWNKN6HSIA3W6MUKF7GWJFMZBT6YBRDLQ3NZXKGN4IK5ER3O5Y` |
+| Mayank Dewangan | mayank24102@iiitnr.edu.in | `GBJKZ6S7XFDNQ4J6PEDWBJI3HMC7EDNM4XBZBX3AEADD7HY2UYAU4GAF` |
 
-### 🔄 Iteration & Improvements
-Based on the collected user feedback, the following improvements were planned and implemented:
+### 📊 Feedback Documentation & Implementation
+User feedback was collected via our in-app feedback form. We asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem.
 
-- **Global Time Adaption**: Addressed Harsh Kaushik's feedback by implementing automatic conversion of local time selections to UTC (`toISOString()`), ensuring global consistency and accurate time-based contract execution across all timezones.
-  - **Git Commit**: [`5e3c97c390bc99f17aa371c74bdc2258fab80c48`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/5e3c97c390bc99f17aa371c74bdc2258fab80c48)
-
-- **Visual Amount Validation**: Based on Madhav Seth's feedback, we redesigned the amount fields to be more prominent and integrated an automatic, real-time USD value conversion to help users easily double-check amounts before finalizing contracts.
-  - **Git Commit**: [`6929c2260de5d91fe11585ad5ec64401d40d0bca`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/6929c2260de5d91fe11585ad5ec64401d40d0bca)
-
-- **Contextual Tooltips & Form Helpers**: To resolve Md Athar Sharif's confusion with advanced features, we added contextual tooltips and inline explanations (especially for "Oracle Data") to guide users smoothly through the multi-step creation form.
-  - **Git Commit**: [`f3ed0c87d0c0b789412f3191cd40c6b945424339`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/f3ed0c87d0c0b789412f3191cd40c6b945424339)
-
-- **Localized Countdown & Timezone Indicator**: Responding to Mayank Dixit's request, we implemented a localized countdown timer on the contract dashboard that automatically detects and displays the user's local timezone.
-  - **Git Commit**: [`fc12ebbbb1f43c4f0042264aa83fbe2202d8776d`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/fc12ebbbb1f43c4f0042264aa83fbe2202d8776d)
-
-- **Navigation Fixes**: Nandita reported an issue with the form navigation. We fixed the state management bug that prevented the back button from working properly in the wizard.
-  - **Git Commit**: [`a2866a778a5a0e3d48fc71dc9080c65c5bfb9c23`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/a2866a778a5a0e3d48fc71dc9080c65c5bfb9c23)
+| User Name | User Email | User Wallet Address | User Feedback | Commit ID |
+| :--- | :--- | :--- | :--- | :--- |
+| Madhav Seth | madhav24100@iiitnr.edu.in | `GDTWHQ...URCR` | Small numbers in the amount fields lead to mistakes; requested better visual validation. | [`6929c22`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/6929c2260de5d91fe11585ad5ec64401d40d0bca) |
+| Mayank Dixit | mayank24100@iiitnr.edu.in | `GBAUV4...ANFF` | Confused about contract unlock times; requested a localized countdown and timezone indicator. | [`fc12ebb`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/fc12ebbbb1f43c4f0042264aa83fbe2202d8776d) |
+| Harsh Kaushik | harsh.kaushik10b@gmail.com | `GBLZNJ...IRDW` | Raised concerns about global time adaptation and timezone consistency across different regions. | [`5e3c97c`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/5e3c97c390bc99f17aa371c74bdc2258fab80c48) |
+| Md Athar Sharif | md24100@iiitnr.edu.in | `GATVVS...FJ2O` | Found complex fields like "Oracle Data" confusing and asked for inline guidance. | [`f3ed0c8`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/f3ed0c87d0c0b789412f3191cd40c6b945424339) |
+| Nandita | nanditasahu141004@gmail.com | `GBZU54...3O5Y` | Reported a bug where the back button was not working during the contract creation flow. | [`a2866a7`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/a2866a778a5a0e3d48fc71dc9080c65c5bfb9c23) |
+| Mayank Dewangan | mayank24102@iiitnr.edu.in | `GBJKZ6...4GAF` | General positive feedback and usability testing. | N/A |
 
 ---
 

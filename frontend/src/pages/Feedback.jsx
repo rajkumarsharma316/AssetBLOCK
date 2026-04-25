@@ -11,7 +11,10 @@ export default function Feedback() {
     email: '',
     walletAddress: user?.publicKey || '',
     rating: 0,
-    description: '',
+    lackingFeature: '',
+    bugsFound: '',
+    solvesIssue: '',
+    generalFeedback: '',
   });
 
   const [hoverRating, setHoverRating] = useState(0);
@@ -34,8 +37,19 @@ export default function Feedback() {
     if (!form.walletAddress.trim())
       return setError('Please enter your wallet address.');
     if (form.rating === 0) return setError('Please select a star rating.');
-    if (!form.description.trim())
-      return setError('Please write a feedback description.');
+    if (!form.lackingFeature.trim())
+      return setError('Please tell us if any feature is lacking.');
+    if (!form.bugsFound.trim())
+      return setError('Please let us know if you found any bugs.');
+    if (!form.solvesIssue.trim())
+      return setError('Please let us know if you think this dApp is able to solve its targeted issue.');
+
+    const combinedDescription = `
+Missing Features: ${form.lackingFeature.trim()}
+Bugs/Issues: ${form.bugsFound.trim()}
+Solves Targeted Issue: ${form.solvesIssue.trim()}
+General Feedback: ${form.generalFeedback.trim() || 'N/A'}
+    `.trim();
 
     setLoading(true);
     try {
@@ -44,7 +58,7 @@ export default function Feedback() {
         email: form.email.trim(),
         walletAddress: form.walletAddress.trim(),
         rating: form.rating,
-        description: form.description.trim(),
+        description: combinedDescription,
       });
       setSubmitted(true);
     } catch (err) {
@@ -107,7 +121,10 @@ export default function Feedback() {
                 email: '',
                 walletAddress: user?.publicKey || '',
                 rating: 0,
-                description: '',
+                lackingFeature: '',
+                bugsFound: '',
+                solvesIssue: '',
+                generalFeedback: '',
               });
             }}
           >
@@ -278,15 +295,52 @@ export default function Feedback() {
           </div>
         </div>
 
-        {/* Description */}
+        {/* Specific Questions */}
         <div className="form-group">
-          <label className="form-label">Your Feedback *</label>
+          <label className="form-label">1. Is there any feature you think this product is lacking? *</label>
           <textarea
             className="form-textarea"
-            placeholder="Tell us what you liked, what could be improved, or any suggestions you have..."
-            rows={5}
-            value={form.description}
-            onChange={(e) => updateField('description', e.target.value)}
+            placeholder="Let us know what features you'd like to see..."
+            rows={3}
+            value={form.lackingFeature}
+            onChange={(e) => updateField('lackingFeature', e.target.value)}
+            style={{ resize: 'vertical' }}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">2. Did you find any bugs/errors/issues while using this app? *</label>
+          <textarea
+            className="form-textarea"
+            placeholder="Report any unexpected behavior or issues..."
+            rows={3}
+            value={form.bugsFound}
+            onChange={(e) => updateField('bugsFound', e.target.value)}
+            style={{ resize: 'vertical' }}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">3. Do you think this dApp is able to solve the issue it's targeting? *</label>
+          <textarea
+            className="form-textarea"
+            placeholder="Share your thoughts on its real-world utility..."
+            rows={3}
+            value={form.solvesIssue}
+            onChange={(e) => updateField('solvesIssue', e.target.value)}
+            style={{ resize: 'vertical' }}
+          />
+        </div>
+
+        {/* General Description */}
+        <div className="form-group">
+          <label className="form-label">Any other general feedback? (Optional)</label>
+          <textarea
+            className="form-textarea"
+            placeholder="Tell us what you liked, what could be improved, or any other suggestions..."
+            rows={3}
+            value={form.generalFeedback}
+            onChange={(e) => updateField('generalFeedback', e.target.value)}
             style={{ resize: 'vertical' }}
           />
         </div>
