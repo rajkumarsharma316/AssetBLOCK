@@ -40,7 +40,7 @@ The following users have successfully tested and interacted with the AssetBlock 
 | Mayank Dewangan | mayank24102@iiitnr.edu.in | `GBJKZ6S7XFDNQ4J6PEDWBJI3HMC7EDNM4XBZBX3AEADD7HY2UYAU4GAF` |
 
 ### 📊 Feedback Documentation & Implementation
-User feedback was collected via our in-app feedback form. We asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem. **[Download raw feedback data (Excel)](backend/data/feedback.xlsx)**.
+User feedback was collected via our in-app feedback form. We asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem.
 
 | User Name | User Email | User Wallet Address | User Feedback | Commit ID |
 | :--- | :--- | :--- | :--- | :--- |
