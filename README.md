@@ -40,7 +40,7 @@ The following users have successfully tested and interacted with the AssetBlock 
 | Mayank Dewangan | mayank24102@iiitnr.edu.in | `GBJKZ6S7XFDNQ4J6PEDWBJI3HMC7EDNM4XBZBX3AEADD7HY2UYAU4GAF` |
 
 ### 📊 Feedback Documentation & Implementation
-User feedback was collected via our in-app feedback form. We asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem.
+User feedback was collected via our in-app feedback form. We asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem. **[Download raw feedback data (Excel)](backend/data/feedback.xlsx)**.
 
 | User Name | User Email | User Wallet Address | User Feedback | Commit ID |
 | :--- | :--- | :--- | :--- | :--- |
@@ -50,6 +50,14 @@ User feedback was collected via our in-app feedback form. We asked users specifi
 | Md Athar Sharif | md24100@iiitnr.edu.in | `GATVVS...FJ2O` | Found complex fields like "Oracle Data" confusing and asked for inline guidance. | [`f3ed0c8`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/f3ed0c87d0c0b789412f3191cd40c6b945424339) |
 | Nandita | nanditasahu141004@gmail.com | `GBZU54...3O5Y` | Reported a bug where the back button was not working during the contract creation flow. | [`a2866a7`](https://github.com/rajkumarsharma316/AssetBLOCK/commit/a2866a778a5a0e3d48fc71dc9080c65c5bfb9c23) |
 | Mayank Dewangan | mayank24102@iiitnr.edu.in | `GBJKZ6...4GAF` | General positive feedback and usability testing. | N/A |
+
+### 🚀 Future Roadmap & Evolution
+Based on the collected user feedback and observations during the Level 5 validation phase, we plan to implement the following improvements in the next development cycle:
+
+1. **Enhanced Input Validation:** Expand on the visual amount validation to include real-time fee estimations and balance checks before transaction submission.
+2. **Localization & Timezones:** Build upon the localized countdown timer to allow users to select their preferred timezone when creating time-bound contracts.
+3. **Inline Tutorials:** Create a guided walkthrough for first-time users, specifically focusing on complex features like "Oracle Data" and "Multi-signature setup".
+4. **Improved Error Handling:** Implement a more robust error recovery system with descriptive, user-friendly messages for transaction failures.
 
 ---
 
@@ -86,6 +94,8 @@ User feedback was collected via our in-app feedback form. We asked users specifi
 ---
 
 ## 🏗️ Architecture
+
+*For a detailed system design and security overview, please see the [Architecture Document](ARCHITECTURE.md).*
 
 ```text
 ┌─────────────────────────────────────────────────┐
