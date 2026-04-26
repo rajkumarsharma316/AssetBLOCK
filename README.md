@@ -62,7 +62,6 @@ Based on the collected user feedback and observations during the Level 5 validat
 
 ---
 
-## 🏆 Level 6: Production Requirements
 
 As part of the final Demo Day preparations, the following production-readiness features have been implemented:
 
