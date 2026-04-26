@@ -40,6 +40,27 @@ router.post('/', async (req, res) => {
 
     await insert('feedback', feedbackEntry);
 
+    // Sync to Google Forms asynchronously
+    try {
+      const googleFormData = new URLSearchParams();
+      googleFormData.append('entry.1068953520', name.trim());
+      googleFormData.append('entry.1844604228', email.trim());
+      googleFormData.append('entry.1303556409', walletAddress.trim());
+      googleFormData.append('entry.966019461', String(rating));
+      googleFormData.append('entry.1855363791', description.trim());
+      // Fill specific questions with N/A to prevent required field errors
+      googleFormData.append('entry.1280232555', 'N/A (Submitted via in-app UI)'); 
+      googleFormData.append('entry.170377751', 'N/A (Submitted via in-app UI)');
+      googleFormData.append('entry.148143726', 'N/A (Submitted via in-app UI)');
+
+      fetch('https://docs.google.com/forms/d/e/1FAIpQLSdzun_c2MYBrCb8LBGG3YyMfyewuHVtavRAEm-gMI6MeGJvGA/formResponse', {
+        method: 'POST',
+        body: googleFormData,
+      }).catch(e => logger.error('Google Form sync failed', { error: e.message }));
+    } catch (e) {
+      logger.error('Google Form sync failed', { error: e.message });
+    }
+
     logger.info(`New feedback from ${name} (${email}) - Rating: ${rating}/5`);
 
     res.json({
