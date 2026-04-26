@@ -127,6 +127,21 @@ export function buildPaymentTransaction(sourceAccount, destination, amount, asse
 }
 
 /**
+ * Build a FeeBump transaction for gasless operations (Advanced Feature)
+ */
+export async function buildFeeBumpTransaction(innerTx, sponsorSecret) {
+  const sponsorKeypair = Keypair.fromSecret(sponsorSecret);
+  const feeBumpTx = TransactionBuilder.buildFeeBumpTransaction(
+    sponsorKeypair,
+    BASE_FEE,
+    innerTx,
+    Networks.TESTNET
+  );
+  feeBumpTx.sign(sponsorKeypair);
+  return feeBumpTx;
+}
+
+/**
  * Submit a signed transaction
  */
 export async function submitTransaction(tx) {
@@ -179,6 +194,7 @@ export default {
   loadAccount,
   configureMultiSig,
   buildPaymentTransaction,
+  buildFeeBumpTransaction,
   submitTransaction,
   getBalance,
   getTransactionHistory,

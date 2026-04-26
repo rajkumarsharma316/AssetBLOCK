@@ -8,6 +8,8 @@ import {
   MessageSquareHeart,
   Download,
   X,
+  BarChart3,
+  Activity,
 } from 'lucide-react';
 import { feedbackApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +19,8 @@ const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/create', label: 'Create Contract', icon: FilePlus2 },
   { path: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
+  { path: '/metrics', label: 'Metrics', icon: BarChart3 },
+  { path: '/monitoring', label: 'Monitoring', icon: Activity },
 ];
 
 export default function Sidebar({ collapsed, onToggle, className = '', isMobile = false }) {

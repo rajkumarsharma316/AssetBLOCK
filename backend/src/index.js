@@ -5,6 +5,9 @@ import authRoutes from './routes/auth.js';
 import contractRoutes from './routes/contracts.js';
 import transactionRoutes from './routes/transactions.js';
 import feedbackRoutes from './routes/feedback.js';
+import metricsRoutes from './routes/metrics.js';
+import monitoringRoutes from './routes/monitoring.js';
+import indexingRoutes from './routes/indexing.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { startMonitor } from './services/monitor.js';
 import logger from './utils/logger.js';
@@ -26,6 +29,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/metrics', metricsRoutes);
+app.use('/api/monitor', monitoringRoutes);
+app.use('/api/indexing', indexingRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

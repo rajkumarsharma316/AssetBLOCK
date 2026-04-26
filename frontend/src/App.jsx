@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard';
 import CreateContract from './pages/CreateContract';
 import ContractDetail from './pages/ContractDetail';
 import Transactions from './pages/Transactions';
+import Metrics from './pages/Metrics';
+import Monitoring from './pages/Monitoring';
 import Feedback from './pages/Feedback';
 import Login from './pages/Login';
 
@@ -70,6 +72,8 @@ function AppLayout() {
           <Route path="/create" element={<CreateContract />} />
           <Route path="/contract/:id" element={<ContractDetail />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/metrics" element={<Metrics />} />
+          <Route path="/monitoring" element={<Monitoring />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
