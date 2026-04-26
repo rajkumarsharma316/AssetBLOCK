@@ -65,7 +65,7 @@ As part of the final production readiness phase, we have scaled the platform and
 | 31 | Test User 31 | `GCZG4GZZPZ2U6R3I5ZJ6L4S5D3XXJQQ2K6N3ZXYJ7K3QGZ2A5D3XXJQQ` |
 
 ### 📊 Feedback Documentation & Implementation
-User feedback was collected via our in-app feedback form. We asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem. **[Download raw feedback data (Excel)](backend/data/feedback.xlsx)**.
+User feedback was collected via our in-app feedback form. We asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem.
 
 | User Name | User Email | User Wallet Address | User Feedback | Commit ID |
 | :--- | :--- | :--- | :--- | :--- |
