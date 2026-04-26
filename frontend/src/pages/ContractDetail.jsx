@@ -87,19 +87,13 @@ export default function ContractDetail() {
           signedXdr = signRes.signedTxXdr;
         }
 
-        // Submit via Horizon
-        const response = await fetch('https://horizon-testnet.stellar.org/transactions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `tx=${encodeURIComponent(signedXdr)}`,
-        });
-
-        const result = await response.json();
-        if (!response.ok) throw new Error(JSON.stringify(result.extras?.result_codes || result));
-
-        // Mark as funded in backend
-        await contractsApi.fund(id, result.hash);
-        setSuccess(`Contract funded! TX: ${result.hash.substring(0, 12)}...`);
+        // Submit the signed XDR to the backend for Gasless Fee Sponsorship (FeeBump)
+        const clientModule = await import('../api/client');
+        const client = clientModule.default;
+        
+        const backendResponse = await client.post(`/contracts/${id}/fund`, { signedXdr });
+        
+        setSuccess(`Contract funded gaslessly! TX: ${backendResponse.data.txHash.substring(0, 12)}...`);
         await loadContract();
         await refreshBalance();
       }

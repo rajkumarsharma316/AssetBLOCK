@@ -4,6 +4,9 @@ import { findOne, findAll, run, insert, rpc } from '../db/database.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { createEscrow, buildFundTransaction, markFunded, releaseEscrow, refundEscrow } from '../services/escrow.js';
 import { createNotification } from '../services/notifications.js';
+import stellarService from '../services/stellar.js';
+import { TransactionBuilder, Networks } from '@stellar/stellar-sdk';
+import config from '../config.js';
 import { findPaths, buildPathPaymentTx } from '../services/pathPayment.js';
 import logger from '../utils/logger.js';
 
@@ -173,12 +176,37 @@ router.get('/:id', async (req, res) => {
  */
 router.post('/:id/fund', async (req, res) => {
   try {
-    const { txHash } = req.body || {};
+    const { txHash, signedXdr } = req.body || {};
 
     if (txHash) {
       // Client already submitted the transaction — mark as funded
       await markFunded(req.params.id, txHash);
       return res.json({ success: true, message: 'Contract funded' });
+    }
+
+    if (signedXdr) {
+      // Advanced Feature: Gasless Fee Sponsorship
+      // Client has signed the inner transaction, but we will wrap it in a FeeBump
+      // and the backend sponsor account will pay the XLM transaction fee.
+      const innerTx = TransactionBuilder.fromXDR(signedXdr, Networks.TESTNET);
+      
+      // Ensure the sponsor account is funded (testnet convenience)
+      const sponsorSecret = config.admin.sponsorSecret;
+      const { Keypair } = await import('@stellar/stellar-sdk');
+      const sponsorPublicKey = Keypair.fromSecret(sponsorSecret).publicKey();
+      
+      try {
+        await stellarService.loadAccount(sponsorPublicKey);
+      } catch (e) {
+        // If sponsor isn't funded, fund it via friendbot automatically
+        await stellarService.fundWithFriendbot(sponsorPublicKey).catch(() => {});
+      }
+
+      const feeBumpTx = await stellarService.buildFeeBumpTransaction(innerTx, sponsorSecret);
+      const result = await stellarService.submitTransaction(feeBumpTx);
+      
+      await markFunded(req.params.id, result.hash);
+      return res.json({ success: true, message: 'Contract funded gaslessly!', txHash: result.hash });
     }
 
     // Build the fund transaction XDR

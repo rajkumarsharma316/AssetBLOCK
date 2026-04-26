@@ -31,6 +31,7 @@ const config = {
   },
   admin: {
     wallet: process.env.ADMIN_WALLET || '', // The public key of the admin user
+    sponsorSecret: process.env.SPONSOR_SECRET || 'SAX3R6Q463ZXZL2D4E6XZLYAIP7ZZU3S2XWYQZ3XXQYZZWY2YQYY3P3N', // Fake default
   },
 };
 
