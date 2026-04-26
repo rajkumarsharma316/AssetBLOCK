@@ -72,8 +72,10 @@ AssetBLOCK highlights two core advanced features:
 
 ### 2. Live Metrics & Monitoring Dashboard 📊
 The platform features an active internal metrics dashboard (DAU, transactions, retention) and an infrastructure monitoring dashboard (System health, DB latency, Worker status).
-- **Metrics Dashboard:** *[Add Screenshot or Live Link Here]*
-- **Monitoring Dashboard:** *[Add Screenshot or Live Link Here]*
+- **Metrics Dashboard:** <img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/2afa83f7-d5c1-4e0e-830f-068f1ed14020" />
+
+
+- **Monitoring Dashboard:**<img width="1902" height="845" alt="image" src="https://github.com/user-attachments/assets/8498968c-36b7-458c-9eb4-ab3d3f2b1c7d" />
 
 ### 3. Data Indexing 🗃️
 Implemented robust data indexing for smart contracts via our backend using Supabase PostgreSQL.
