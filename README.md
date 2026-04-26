@@ -87,7 +87,7 @@ Completed a thorough security review of the application's auth flow, transaction
 - **[View the Security Checklist (SECURITY.md)](SECURITY.md)**
 
 ### 5. Community Contribution 🌍
-- **Twitter Post:** *[Place your Twitter link here]*
+- **Twitter Post:** https://x.com/RajkumarSh18704/status/2048349207099253028?s=20
 
 ---
 
