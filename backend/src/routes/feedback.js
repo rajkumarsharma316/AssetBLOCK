@@ -48,14 +48,14 @@ General Feedback: ${generalFeedback}`;
     // Sync to Google Forms asynchronously
     try {
       const googleFormData = new URLSearchParams();
-      googleFormData.append('entry.NAME_ID_HERE', name.trim());
-      googleFormData.append('entry.EMAIL_ID_HERE', email.trim());
-      googleFormData.append('entry.WALLET_ID_HERE', walletAddress.trim());
-      googleFormData.append('entry.RATING_ID_HERE', String(rating));
-      googleFormData.append('entry.FEATURE_ID_HERE', lackingFeature);
-      googleFormData.append('entry.BUGS_ID_HERE', bugsFound);
-      googleFormData.append('entry.SOLVES_ID_HERE', solvesIssue);
-      googleFormData.append('entry.GENERAL_ID_HERE', generalFeedback);
+      googleFormData.append('entry.1068953520', name.trim());
+      googleFormData.append('entry.1844604228', email.trim());
+      googleFormData.append('entry.1303556409', walletAddress.trim());
+      googleFormData.append('entry.966019461', String(rating));
+      googleFormData.append('entry.1280232555', lackingFeature);
+      googleFormData.append('entry.170377751', bugsFound);
+      googleFormData.append('entry.148143726', solvesIssue);
+      googleFormData.append('entry.1855363791', generalFeedback);
 
       fetch('https://docs.google.com/forms/d/1bTGtfLj9r2A_Cgq76p_GuZEUkyQSh3vi7bDkEf8uupA/formResponse', {
         method: 'POST',
