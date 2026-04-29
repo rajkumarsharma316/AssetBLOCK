@@ -130,6 +130,7 @@ Completed a thorough security review of the application's auth flow, transaction
   - 👥 **Approval-based (Multi-sig)**: Requires *N* out of *M* designated signers to approve the payment before release.
   - 🔮 **Oracle-based**: Triggers payment release based on external real-world data (e.g., asset prices hitting a target).
 - **Automated Funding**: Easy testnet onboarding with automated account generation and Friendbot funding.
+- 🔐 **Isolated Escrow Accounts**: Every time a new escrow contract is created, the backend generates a brand new, dedicated Stellar account specifically for that contract. This ensures complete isolation of funds and allows each contract to have its own custom multi-signature rules and time-locks.
 - **Modern UI/UX**: A vibrant, glassmorphic design system tailored for a premium user experience.
 - **Responsive Design**: Fully optimized for both desktop and mobile web experiences.
 - **Persistent Cloud Data**: Fast and reliable backend using Supabase (PostgreSQL).
