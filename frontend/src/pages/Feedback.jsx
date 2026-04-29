@@ -58,7 +58,10 @@ General Feedback: ${form.generalFeedback.trim() || 'N/A'}
         email: form.email.trim(),
         walletAddress: form.walletAddress.trim(),
         rating: form.rating,
-        description: combinedDescription,
+        lackingFeature: form.lackingFeature.trim(),
+        bugsFound: form.bugsFound.trim(),
+        solvesIssue: form.solvesIssue.trim(),
+        generalFeedback: form.generalFeedback.trim() || 'N/A',
       });
       setSubmitted(true);
     } catch (err) {

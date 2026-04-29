@@ -13,11 +13,11 @@ const router = express.Router();
  */
 router.post('/', async (req, res) => {
   try {
-    const { name, email, walletAddress, rating, description } = req.body;
+    const { name, email, walletAddress, rating, lackingFeature, bugsFound, solvesIssue, generalFeedback } = req.body;
 
     // Validation
-    if (!name || !email || !walletAddress || !rating || !description) {
-      return res.status(400).json({ error: 'All fields are required.' });
+    if (!name || !email || !walletAddress || !rating) {
+      return res.status(400).json({ error: 'Core fields are required.' });
     }
 
     if (typeof rating !== 'number' || rating < 1 || rating > 5) {
@@ -29,13 +29,18 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Invalid email address.' });
     }
 
+    const combinedDescription = `Missing Features: ${lackingFeature}
+Bugs/Issues: ${bugsFound}
+Solves Targeted Issue: ${solvesIssue}
+General Feedback: ${generalFeedback}`;
+
     const feedbackEntry = {
       id: uuidv4(),
       name: name.trim(),
       email: email.trim(),
       wallet_address: walletAddress.trim(),
       rating,
-      description: description.trim(),
+      description: combinedDescription.trim(),
     };
 
     await insert('feedback', feedbackEntry);
@@ -43,17 +48,16 @@ router.post('/', async (req, res) => {
     // Sync to Google Forms asynchronously
     try {
       const googleFormData = new URLSearchParams();
-      googleFormData.append('entry.1068953520', name.trim());
-      googleFormData.append('entry.1844604228', email.trim());
-      googleFormData.append('entry.1303556409', walletAddress.trim());
-      googleFormData.append('entry.966019461', String(rating));
-      googleFormData.append('entry.1855363791', description.trim());
-      // Fill specific questions with N/A to prevent required field errors
-      googleFormData.append('entry.1280232555', 'N/A (Submitted via in-app UI)'); 
-      googleFormData.append('entry.170377751', 'N/A (Submitted via in-app UI)');
-      googleFormData.append('entry.148143726', 'N/A (Submitted via in-app UI)');
+      googleFormData.append('entry.NAME_ID_HERE', name.trim());
+      googleFormData.append('entry.EMAIL_ID_HERE', email.trim());
+      googleFormData.append('entry.WALLET_ID_HERE', walletAddress.trim());
+      googleFormData.append('entry.RATING_ID_HERE', String(rating));
+      googleFormData.append('entry.FEATURE_ID_HERE', lackingFeature);
+      googleFormData.append('entry.BUGS_ID_HERE', bugsFound);
+      googleFormData.append('entry.SOLVES_ID_HERE', solvesIssue);
+      googleFormData.append('entry.GENERAL_ID_HERE', generalFeedback);
 
-      fetch('https://docs.google.com/forms/d/e/1FAIpQLSdzun_c2MYBrCb8LBGG3YyMfyewuHVtavRAEm-gMI6MeGJvGA/formResponse', {
+      fetch('https://docs.google.com/forms/d/1bTGtfLj9r2A_Cgq76p_GuZEUkyQSh3vi7bDkEf8uupA/formResponse', {
         method: 'POST',
         body: googleFormData,
       }).catch(e => logger.error('Google Form sync failed', { error: e.message }));

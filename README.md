@@ -72,7 +72,7 @@ As part of the final production readiness phase, we have scaled the platform and
 ### 📊 Feedback Documentation & Implementation
 **[📥 Download Exported Excel/CSV Feedback Sheet](./feedback_export.csv)** | **[📊 View Live Google Form Responses Sheet](<INSERT_FORM_RESPONSE_SHEET_LINK_HERE>)**
 
-User feedback was collected through two channels to maximize user convenience: directly via our native in-app feedback UI and externally through our [Official Google Form](https://docs.google.com/forms/d/e/1FAIpQLSdzun_c2MYBrCb8LBGG3YyMfyewuHVtavRAEm-gMI6MeGJvGA/viewform). Through both methods, we asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem.
+User feedback was collected through two channels to maximize user convenience: directly via our native in-app feedback UI and externally through our [Official Google Form](https://docs.google.com/forms/d/1bTGtfLj9r2A_Cgq76p_GuZEUkyQSh3vi7bDkEf8uupA/viewform). Through both methods, we asked users specific questions regarding missing features, bugs/issues, and whether the dApp effectively solves the targeted problem.
 
 | User Name | User Email | User Wallet Address | User Feedback | Commit ID |
 | :--- | :--- | :--- | :--- | :--- |
