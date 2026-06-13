@@ -11,6 +11,9 @@ import Metrics from './pages/Metrics';
 import Monitoring from './pages/Monitoring';
 import Feedback from './pages/Feedback';
 import Login from './pages/Login';
+import JobList from './pages/JobList';
+import JobDetail from './pages/JobDetail';
+import PostJob from './pages/PostJob';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -75,6 +78,9 @@ function AppLayout() {
           <Route path="/metrics" element={<Metrics />} />
           <Route path="/monitoring" element={<Monitoring />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/jobs" element={<JobList />} />
+          <Route path="/jobs/post" element={<PostJob />} />
+          <Route path="/jobs/:id" element={<JobDetail />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

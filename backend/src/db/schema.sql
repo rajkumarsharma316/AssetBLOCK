@@ -89,6 +89,36 @@ CREATE TABLE IF NOT EXISTS feedback (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Jobs (freelance marketplace)
+CREATE TABLE IF NOT EXISTS jobs (
+  id TEXT PRIMARY KEY,
+  client_public_key TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  budget TEXT NOT NULL,
+  asset_code TEXT DEFAULT 'XLM',
+  skills TEXT, -- JSON array stored as text
+  deadline TIMESTAMPTZ,
+  status TEXT DEFAULT 'open' CHECK(status IN ('open', 'assigned', 'completed', 'cancelled')),
+  contract_id TEXT, -- linked escrow contract
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  FOREIGN KEY (client_public_key) REFERENCES users(public_key)
+);
+
+-- Applications (freelancer bids on jobs)
+CREATE TABLE IF NOT EXISTS applications (
+  id TEXT PRIMARY KEY,
+  job_id TEXT NOT NULL,
+  freelancer_public_key TEXT NOT NULL,
+  proposal TEXT NOT NULL,
+  bid_amount TEXT NOT NULL,
+  status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'rejected')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+  FOREIGN KEY (freelancer_public_key) REFERENCES users(public_key)
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_contracts_creator ON contracts(creator_public_key);
 CREATE INDEX IF NOT EXISTS idx_contracts_status ON contracts(status);
@@ -96,6 +126,10 @@ CREATE INDEX IF NOT EXISTS idx_conditions_contract ON conditions(contract_id);
 CREATE INDEX IF NOT EXISTS idx_signers_contract ON signers(contract_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_contract ON transactions(contract_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_public_key);
+CREATE INDEX IF NOT EXISTS idx_jobs_client ON jobs(client_public_key);
+CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
+CREATE INDEX IF NOT EXISTS idx_applications_job ON applications(job_id);
+CREATE INDEX IF NOT EXISTS idx_applications_freelancer ON applications(freelancer_public_key);
 
 -- ============================================================
 -- Disable RLS for all tables (backend uses service_role key)
@@ -107,6 +141,8 @@ ALTER TABLE signers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
+ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
 
 -- Create policies that allow the service_role full access
 -- (service_role bypasses RLS by default, but these are here for clarity)
@@ -117,3 +153,6 @@ CREATE POLICY "Service role full access" ON signers FOR ALL USING (true) WITH CH
 CREATE POLICY "Service role full access" ON transactions FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Service role full access" ON notifications FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Service role full access" ON feedback FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON jobs FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON applications FOR ALL USING (true) WITH CHECK (true);
+

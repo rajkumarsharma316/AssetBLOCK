@@ -8,6 +8,8 @@ import feedbackRoutes from './routes/feedback.js';
 import metricsRoutes from './routes/metrics.js';
 import monitoringRoutes from './routes/monitoring.js';
 import indexingRoutes from './routes/indexing.js';
+import jobRoutes from './routes/jobs.js';
+import applicationRoutes from './routes/applications.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { startMonitor } from './services/monitor.js';
 import logger from './utils/logger.js';
@@ -32,6 +34,8 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/metrics', metricsRoutes);
 app.use('/api/monitor', monitoringRoutes);
 app.use('/api/indexing', indexingRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -10,6 +10,8 @@ import {
   X,
   BarChart3,
   Activity,
+  Briefcase,
+  PlusCircle,
 } from 'lucide-react';
 import { feedbackApi } from '../api/client';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +19,8 @@ import ABLogo from './ABLogo';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/jobs', label: 'Find Jobs', icon: Briefcase },
+  { path: '/jobs/post', label: 'Post Job', icon: PlusCircle },
   { path: '/create', label: 'Create Contract', icon: FilePlus2 },
   { path: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
   { path: '/metrics', label: 'Metrics', icon: BarChart3 },

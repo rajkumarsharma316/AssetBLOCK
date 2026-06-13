@@ -67,4 +67,20 @@ export const feedbackApi = {
   exportCsv: () => client.get('/feedback/export', { responseType: 'blob' }),
 };
 
+// Jobs API
+export const jobsApi = {
+  create: (data) => client.post('/jobs', data),
+  list: (params) => client.get('/jobs', { params }),
+  get: (id) => client.get(`/jobs/${id}`),
+  cancel: (id) => client.post(`/jobs/${id}/cancel`),
+};
+
+// Applications API
+export const applicationsApi = {
+  apply: (data) => client.post('/applications', data),
+  my: () => client.get('/applications/my'),
+  accept: (id) => client.post(`/applications/${id}/accept`),
+  reject: (id) => client.post(`/applications/${id}/reject`),
+};
+
 export default client;
